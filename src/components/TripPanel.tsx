@@ -84,16 +84,16 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
         <div className="space-y-1">
           <label htmlFor="trip-name" className="text-sm font-medium">Trip name</label>
           <input id="trip-name" value={label} onChange={(e) => setLabel(e.target.value)}
-            className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" placeholder="Malapascua May 2026" />
+            className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" placeholder="e.g. Malapascua May 2026" />
         </div>
 
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
-            <label htmlFor="start" className="text-sm font-medium">Start</label>
+            <label htmlFor="start" className="text-sm font-medium">Start (inclusive)</label>
             <input id="start" type="date" value={start} onChange={(e) => setStart(e.target.value)} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" />
           </div>
           <div className="space-y-1">
-            <label htmlFor="end" className="text-sm font-medium">End</label>
+            <label htmlFor="end" className="text-sm font-medium">End (inclusive)</label>
             <input id="end" type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" />
           </div>
         </div>

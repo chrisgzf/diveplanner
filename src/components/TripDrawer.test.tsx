@@ -33,4 +33,12 @@ describe('TripDrawer', () => {
     // switch type to non-dive via the select (native fallback labelled "Trip type")
     expect(screen.getByText(/booking checklist/i)).toBeInTheDocument()
   })
+
+  it('uses the new placeholders, inclusive date labels, and wishlist default', () => {
+    render(<TripDrawer open mode="create" initialRange={{ start: '2026-05-15', end: '2026-05-23' }} onClose={() => {}} />)
+    expect(screen.getByPlaceholderText('e.g. Malapascua May 2026')).toBeInTheDocument()
+    expect(screen.getByText('Start (inclusive)')).toBeInTheDocument()
+    expect(screen.getByText('End (inclusive)')).toBeInTheDocument()
+    expect((screen.getByLabelText('Status') as HTMLSelectElement).value).toBe('wishlist')
+  })
 })
