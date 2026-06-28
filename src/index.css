@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --surface: #F2F7F8;
+  --ink: #0B1F2A;
+  --muted: #5B7682;
+  --line: #D7E3E6;
+  --primary: #0E7C86;
+  --good: #0E9F6E;
+  --fair: #D9A406;
+  --poor: #E05A3B;
+  --closed: #8595A0;
+  --fun-dive: #2563EB;
+  --course: #0E9F6E;
+  --liveaboard: #7C3AED;
+  --non-dive: #8595A0;
+}
+
+@layer base {
+  html { color-scheme: light; }
+  body {
+    @apply bg-surface text-ink font-body antialiased;
+  }
+  h1, h2, h3 { @apply font-display; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
