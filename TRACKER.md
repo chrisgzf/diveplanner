@@ -134,9 +134,25 @@
 - **Commit:** `f7b3ff3` — feat: change Settings to per-year leaveBudget record
 - Design spec updated to match.
 
+## UI v2 — Next Steps
+
+### Status: Design complete → Plan needed
+
+- **Spec:** `docs/superpowers/specs/2026-06-28-ui-v2-design.md` (committed `b2164d5`)
+- **Next action:** Invoke `superpowers:writing-plans` skill to produce an implementation plan for the UI v2 spec. The plan should decompose the work into SDD-compatible tasks and live at `docs/superpowers/plans/2026-06-28-ui-v2-implementation.md`.
+- **Then:** Resume SDD workflow using that plan (update this tracker with task entries as each task is dispatched and completed).
+
+### UI v2 change groups (summary)
+1. Layout & nav — sticky header, 3-col compact calendar (currentMonth → Dec currentYear+1), inline split panel, responsive top nav (no bottom tab bar), sun/moon toggle
+2. Dark mode — `.dark` CSS variable overrides (ocean palette), `--surface-elevated` token, Shadcn variable bridge, default dark
+3. Calendar cells & hover — full trip-colour fill, amber holiday underline, rich hover tooltip (locations/holiday/trip)
+4. Trip drawer — TripPanel extract, form fixes (placeholders, status default, location Other + `customLocation`), seasonality panel, segmented leave breakdown
+5. Leave & holidays — `applySubstituteHolidays` with chaining, `calendarWindow` replaces `monthsWindow`, `HolidayEntry` type upgrade
+
 ## Current git HEAD
 
 ```
+b2164d5 docs: add UI v2 design spec (layout, dark mode, calendar, drawer, leave)
 b8d0fa0 fix: clear stale holidays on country change, add date validation to trip save
 079248b feat: wire holiday fetching and finalize integration
 7daab04 test: add CalendarView store-isolation test for SharePage
