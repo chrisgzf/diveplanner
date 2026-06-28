@@ -16,7 +16,8 @@ Hosted on Vercel. No backend. All state persisted in localStorage.
 
 | Layer | Choice |
 |---|---|
-| Framework | React 18 + TypeScript + Vite |
+| Package manager + runtime | Bun (1.2.x) — `bun install`, `bun run`; Vercel auto-detects `bun.lock` |
+| Framework | React 18 + TypeScript + Vite (stock Vite; Rolldown deferred) |
 | Routing | React Router v6 (`createBrowserRouter`) |
 | State | Zustand with `persist` middleware → localStorage |
 | UI | Shadcn/ui + Tailwind CSS |
@@ -51,6 +52,15 @@ type MonthRating = 'good' | 'fair' | 'poor' | 'closed'
 ### Trip
 
 ```ts
+type BookingCategory = 'dive-shop' | 'flight' | 'transfer' | 'accommodation' | 'other'
+
+interface BookingItem {
+  id: string
+  category: BookingCategory
+  label: string             // e.g. "Blahblah Divers", "AB123 outbound", "Bus to Mersing"
+  booked: boolean
+}
+
 interface Trip {
   id: string
   label: string             // user-given name, e.g. "Malapascua May 2026"
@@ -59,10 +69,17 @@ interface Trip {
   type: TripType
   status: TripStatus
   locationId?: string       // links to a Location
-  notes?: string            // freeform booking metadata (flights, dive shop, etc.)
+  bookings: BookingItem[]   // user-managed list — add only what this trip needs
+  notes?: string            // freeform notes (anything not covered above)
   estimatedDives?: number   // auto-calculated but user-overridable
 }
 ```
+
+**Booking checklist behaviour:**
+- The list is fully user-managed. Each trip adds only the items it actually needs, so flights are optional (a Tioman trip from Singapore might have only transfers + accommodation) and transfers can repeat (one item per leg, e.g. "Bus to Mersing" + "Ferry to Tioman").
+- When creating a `fun-dive`, `course`, or `liveaboard` trip, the drawer pre-seeds a couple of suggested items (dive shop, accommodation) that the user can rename, remove, or add to. Nothing is mandatory.
+- `non-dive` trips carry no booking checklist — the section is hidden and `bookings` stays empty. They exist purely to consume leave.
+- When a trip has at least one booking item and **all** items are booked, the UI suggests flipping status to `confirmed`. It never forces the change, and trips with no booking items are driven by manual status only.
 
 ### Location
 
@@ -78,9 +95,7 @@ interface Location {
   country: string           // e.g. "Philippines"
   difficulty: 'beginner' | 'intermediate' | 'advanced'
   highlights: string[]      // e.g. ["Thresher sharks", "Wall dives"]
-  seasonality: {
-    [year: number]: LocationMonthRating[]
-  }
+  seasonality: LocationMonthRating[]  // exactly 12 entries, one per month (Jan–Dec); stable across years
   currentNote?: string      // e.g. "Strong currents Mar–May"
   isUserAdded?: boolean     // true for user-created overrides
 }
@@ -123,7 +138,7 @@ Tioman, Perhentian, Palau, Koh Tao, Koh Phi Phi, Malapascua, Gili, Amed, Tulambe
 Each includes:
 - Difficulty rating
 - Highlights (marine life, dive style)
-- Seasonality per year (year-aware — good months for 2026 may differ from 2028)
+- Seasonality (12 month ratings, stable across years — captures monsoon/visibility windows)
 - A note on currents or conditions where relevant
 
 User overrides (`siteOverrides`) are merged with the hardcoded base at runtime; user records take precedence by `id`. An **"Export my overrides"** button (visible only when overrides exist) downloads a JSON file formatted to match the hardcoded data structure, with a comment pointing to the GitHub repo for contribution.
@@ -136,7 +151,7 @@ User overrides (`siteOverrides`) are merged with the hardcoded base at runtime; 
 
 ```
 ┌────────────────────────────────────────────────────┐
-│  18 days leave remaining  (30 total · 12 used)     │
+│  2026: 18 left (30·12 used)  ·  2027: 30 left      │
 ├────────────────────────────────────────────────────┤
 │  Nav: [Planner] [Locations] [Settings] [Share]     │
 ├────────────────────────────────────────────────────┤
@@ -166,21 +181,34 @@ User overrides (`siteOverrides`) are merged with the hardcoded base at runtime; 
 2. **Hover** (desktop) / **tap** (mobile) subsequent dates → range preview grows; tooltip shows which locations are rated `good` or `fair` for those months
 3. **Click/tap** end date → finalizes range; trip creation bottom sheet / right drawer opens
 
-### Trip Creation Drawer
+**No overlapping trips:** trip date ranges may not overlap each other. Days already covered by an existing trip are visually marked as unavailable, and the range preview will not extend across them. This keeps leave accounting unambiguous (every day belongs to at most one trip).
 
-Fields: label, location picker (searchable), trip type, status, notes (freeform).
+### Trip Creation / Edit Drawer
+
+The same drawer handles both creating a new trip and editing an existing one — clicking a trip block on the calendar reopens it pre-filled, with **Save** and **Delete** actions. Creating starts from a fresh range selection. On Save, the date range is validated to not overlap any other trip (excluding the trip being edited); an overlap blocks the save with an inline error.
+
+Fields: label, date range (editable), location picker (searchable), trip type, status, booking checklist, notes (freeform).
+
+Booking checklist:
+- A list of booking items (dive shop, flight, transfer, accommodation, other). Each row: category, label, booked toggle.
+- Dive trips pre-seed suggested items (dive shop, accommodation); user can rename, remove, or add rows. Flights/transfers are added as needed (transfers can repeat per leg).
+- Hidden entirely for `non-dive` trips.
 
 Displays calculated:
-- Leave days consumed (weekdays minus public holidays in range)
+- Leave days consumed (weekdays minus public holidays in range), broken down by year if the range crosses Dec 31
 - Estimated dives (auto-calculated, user can override)
 
 ### Leave Balance Bar
 
+Leave is tracked **per calendar year** (it resets and carries over annually). The rolling 12-month window usually spans two years, so the bar shows both years it currently overlaps, side by side.
+
+For each shown year:
 - Total = `totalLeaveDays + carryoverDays` (default 30)
-- Used = sum of leave days across all trips + non-dive leave blocks for the current calendar year
+- Used = sum of leave days **falling within that year** across all trips and non-dive blocks. A trip crossing Dec 31 contributes its pre-Jan-1 leave days to the earlier year and the rest to the later year.
 - Remaining = Total − Used
-- Colour: green → amber (≤5 days) → red (0 days)
-- On mobile: condensed to a pill `"18 days left"`
+- Colour: green → amber (≤5 days) → red (0 days), evaluated per year
+
+On mobile: condensed to a two-segment pill, e.g. `"’26: 18 · ’27: 30"`.
 
 ---
 
@@ -197,18 +225,17 @@ Displays calculated:
 │                 │  Thresher sharks, wall dives,     │
 │ Malapascua  ●●● │  night dives                     │
 │ Tioman      ●●○ │                                  │
-│ Nusa Penida ●●● │  Seasonality 2026:               │
+│ Nusa Penida ●●● │  Seasonality:                    │
 │ ...             │  J F M A M J J A S O N D        │
 │                 │  ✗ ✗ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✗ ✗      │
-│ + Add location  │  [2026 ▾]                        │
-│                 │                                  │
+│ + Add location  │                                  │
 │                 │  [Plan a trip here →]            │
 └─────────────────┴──────────────────────────────────┘
 ```
 
 - Left panel: filterable/searchable list of all locations (hardcoded + overrides)
 - Right panel / full-screen on mobile: selected location detail
-- **Year selector** on seasonality grid (ratings are year-aware)
+- Seasonality grid shows the 12 monthly ratings (no year selector — ratings are month-based and stable across years)
 - **"Plan a trip here"** → navigates to `/` with location pre-selected and range selection mode active
 - **"+ Add location"** → opens form to create a custom location with user-defined seasonality
 - **"Export my overrides"** → downloads JSON for OSS contribution (visible only when overrides exist)
@@ -233,8 +260,8 @@ Changes are saved immediately to the Zustand store (and therefore localStorage).
 ### Encoding
 
 1. Serialize: `{ trips, siteOverrides, settings }` → JSON string
-2. Compress: `lz-string.compressToBase64(json)` → hash string
-3. URL: `https://diveplanner.vercel.app/share/<hash>`
+2. Compress: `lz-string.compressToEncodedURIComponent(json)` → URL-safe hash string (decode with `decompressFromEncodedURIComponent`; plain base64 is avoided because `+` and `/` are not URL-safe)
+3. URL: `https://diveplanner.christopher.sg/share/<hash>`
 4. Copy to clipboard with success toast on "Share" button click
 
 ### Shared View Behaviour
@@ -257,6 +284,8 @@ Changes are saved immediately to the Zustand store (and therefore localStorage).
 2. Filter to weekdays (Mon–Fri)
 3. Subtract public holidays falling on those weekdays (from holiday cache)
 4. Result = leave days consumed
+
+**Attribution to year:** each remaining leave day is attributed to the calendar year of its own date. A trip spanning Dec 31 therefore contributes some leave to the earlier year and the rest to the later year, which is what the per-year leave balance bar sums.
 
 ### Estimated dives (auto, overridable)
 
