@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { monthsWindow, formatISO, enumerateDays } from '@/lib/dates'
+import { calendarWindow, formatISO, enumerateDays } from '@/lib/dates'
 import { coveredDays } from '@/lib/overlap'
 import { holidaySetFromCache } from '@/lib/holidays'
 import { useAppStore } from '@/store/useAppStore'
@@ -20,7 +20,7 @@ export default function CalendarView({ readOnly = false, trips: tripsProp, holid
   const [anchor, setAnchor] = useState<string | null>(null)
   const [hover, setHover] = useState<string | null>(null)
 
-  const window = useMemo(() => monthsWindow(new Date()), [])
+  const window = useMemo(() => calendarWindow(new Date()), [])
   const today = formatISO(new Date())
   const holidaySet = useMemo(() => holidaySetFromCache(holidays), [holidays])
   const covered = useMemo(() => coveredDays(trips), [trips])

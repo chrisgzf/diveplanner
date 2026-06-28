@@ -1,4 +1,4 @@
-import { eachDayOfInterval, parseISO, format, isWeekend, differenceInCalendarDays, addMonths } from 'date-fns'
+import { eachDayOfInterval, parseISO, format, isWeekend, differenceInCalendarDays } from 'date-fns'
 import type { ISODate } from '@/types'
 
 export function formatISO(date: Date): ISODate {
@@ -17,9 +17,17 @@ export function durationDays(start: ISODate, end: ISODate): number {
   return differenceInCalendarDays(parseISO(end), parseISO(start)) + 1
 }
 
-export function monthsWindow(from: Date, count = 12): { year: number; month: number }[] {
-  return Array.from({ length: count }, (_, i) => {
-    const d = addMonths(new Date(from.getFullYear(), from.getMonth(), 1), i)
-    return { year: d.getFullYear(), month: d.getMonth() + 1 }
-  })
+export function calendarWindow(now: Date): { year: number; month: number }[] {
+  const out: { year: number; month: number }[] = []
+  const startY = now.getFullYear()
+  const startM = now.getMonth() + 1 // 1-12
+  const endY = startY + 1
+  const endM = 12
+  let y = startY
+  let m = startM
+  while (y < endY || (y === endY && m <= endM)) {
+    out.push({ year: y, month: m })
+    if (m === 12) { m = 1; y += 1 } else { m += 1 }
+  }
+  return out
 }

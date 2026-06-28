@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { enumerateDays, isWeekday, durationDays, monthsWindow, formatISO } from './dates'
+import { enumerateDays, isWeekday, durationDays, calendarWindow, formatISO } from './dates'
 
 describe('dates', () => {
   it('enumerateDays returns inclusive list', () => {
@@ -18,13 +18,18 @@ describe('dates', () => {
     expect(durationDays('2026-05-15', '2026-05-23')).toBe(9)
     expect(durationDays('2026-05-15', '2026-05-15')).toBe(1)
   })
-  it('monthsWindow rolls 12 months from the given month', () => {
-    const w = monthsWindow(new Date(2026, 5, 28), 12) // June 2026
-    expect(w).toHaveLength(12)
+  it('calendarWindow runs from the current month through Dec next year', () => {
+    const w = calendarWindow(new Date(2026, 5, 28)) // June 2026 (month index 5)
     expect(w[0]).toEqual({ year: 2026, month: 6 })
-    expect(w[6]).toEqual({ year: 2026, month: 12 })
-    expect(w[7]).toEqual({ year: 2027, month: 1 })
-    expect(w[11]).toEqual({ year: 2027, month: 5 })
+    expect(w[w.length - 1]).toEqual({ year: 2027, month: 12 })
+    // Jun 2026..Dec 2026 = 7, Jan..Dec 2027 = 12 → 19 months.
+    expect(w).toHaveLength(19)
+  })
+  it('calendarWindow from December gives 13 months', () => {
+    const w = calendarWindow(new Date(2026, 11, 1)) // December 2026
+    expect(w[0]).toEqual({ year: 2026, month: 12 })
+    expect(w[w.length - 1]).toEqual({ year: 2027, month: 12 })
+    expect(w).toHaveLength(13)
   })
   it('formatISO formats a date', () => {
     expect(formatISO(new Date(2026, 4, 15))).toBe('2026-05-15')

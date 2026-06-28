@@ -2,12 +2,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Settings as SettingsIcon } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { SUPPORTED_COUNTRIES } from '@/data/countries'
-import { monthsWindow } from '@/lib/dates'
+import { calendarWindow } from '@/lib/dates'
 
 export default function SettingsDialog() {
   const settings = useAppStore((s) => s.settings)
   const updateSettings = useAppStore((s) => s.updateSettings)
-  const years = [...new Set(monthsWindow(new Date()).map((m) => m.year))]
+  const years = [...new Set(calendarWindow(new Date()).map((m) => m.year))]
 
   return (
     <Dialog>

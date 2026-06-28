@@ -1,7 +1,7 @@
 import { useAppStore } from '@/store/useAppStore'
 import { leaveUsedByYear } from '@/lib/leave'
 import { holidaySetFromCache } from '@/lib/holidays'
-import { monthsWindow } from '@/lib/dates'
+import { calendarWindow } from '@/lib/dates'
 
 export interface YearLeave {
   year: number
@@ -17,7 +17,7 @@ export function useLeaveByYear(): YearLeave[] {
 
   const holidaySet = holidaySetFromCache(holidays)
   const used = leaveUsedByYear(trips, holidaySet)
-  const years = [...new Set(monthsWindow(new Date()).map((m) => m.year))]
+  const years = [...new Set(calendarWindow(new Date()).map((m) => m.year))]
 
   return years.map((year) => {
     const total = settings.leaveBudget[year] ?? 0
