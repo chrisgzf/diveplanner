@@ -5,9 +5,11 @@ import BookingChecklist from './BookingChecklist'
 import LocationPicker from './LocationPicker'
 import { useAppStore } from '@/store/useAppStore'
 import { hasOverlap } from '@/lib/overlap'
-import { leaveDaysByYear } from '@/lib/leave'
+import { segmentDays } from '@/lib/leave'
+import type { Segment } from '@/lib/leave'
 import { estimatedDives } from '@/lib/dives'
-import { holidaySetFromCache } from '@/lib/holidays'
+import { holidayNameMap } from '@/lib/holidays'
+import { parseISO, format } from 'date-fns'
 import { monthsInRange } from '@/lib/dates'
 import { useMergedLocations } from '@/hooks/useMergedLocations'
 import type { BookingItem, Trip, TripStatus, TripType } from '@/types'
@@ -56,8 +58,10 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
     setError('')
   }, [mode, trip, initialRange, defaultLocationId])
 
-  const holidaySet = useMemo(() => holidaySetFromCache(holidays), [holidays])
-  const leaveByYear = start && end ? leaveDaysByYear(start, end, holidaySet) : {}
+  const names = useMemo(() => holidayNameMap(holidays), [holidays])
+  const segments = start && end && start <= end ? segmentDays(start, end, names) : []
+  const totalLeave = segments.reduce((n, s) => n + s.leaveDays, 0)
+  const totalDays = segments.reduce((n, s) => n + s.days, 0)
   const autoDives = start && end ? estimatedDives(type, start, end) : 0
   const allBooked = bookings.length > 0 && bookings.every((b) => b.booked)
 
@@ -160,7 +164,29 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
         </div>
 
         <div className="rounded-md border border-line bg-surface-elevated p-3 font-mono text-xs">
-          <div>Leave: {Object.entries(leaveByYear).map(([y, n]) => `${y}: ${n}d`).join('  ·  ') || '0d'}</div>
+          {(() => {
+            const fmt = (d: string) => format(parseISO(d), 'EEE d MMM')
+            const segLabel = (s: Segment) =>
+              s.startDate === s.endDate ? fmt(s.startDate) : `${fmt(s.startDate)} – ${fmt(s.endDate)}`
+            const kindLabel = (s: Segment) =>
+              s.kind === 'holiday' ? `Holiday${s.label ? ` (${s.label})` : ''}`
+              : s.kind === 'weekend' ? 'Weekend'
+              : `${s.leaveDays} day${s.leaveDays === 1 ? '' : 's'} leave`
+            return (
+              <>
+                {segments.length === 0 && <div>Leave: 0d</div>}
+                {segments.map((s) => (
+                  <div key={s.startDate} className="flex justify-between gap-3">
+                    <span className="text-muted">{segLabel(s)}</span>
+                    <span className={s.kind === 'leave' ? 'text-ink' : 'text-muted'}>{kindLabel(s)}</span>
+                  </div>
+                ))}
+                {segments.length > 0 && (
+                  <div className="mt-1 border-t border-line pt-1">Total: {totalLeave} day{totalLeave === 1 ? '' : 's'} leave · {totalDays} days trip</div>
+                )}
+              </>
+            )
+          })()}
           <div className="mt-1 flex items-center gap-2">
             <span>Dives: {diveOverride ?? autoDives}</span>
             <input type="number" min={0} value={diveOverride ?? autoDives}

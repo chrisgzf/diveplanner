@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { leaveDaysInRange, leaveDaysByYear, leaveUsedByYear } from './leave'
+import { leaveDaysInRange, leaveDaysByYear, leaveUsedByYear, segmentDays } from './leave'
 import type { Trip } from '@/types'
 
 const noHols = new Set<string>()
@@ -29,6 +29,24 @@ describe('leaveDaysByYear', () => {
     const byYear = leaveDaysByYear('2026-12-28', '2027-01-03', noHols)
     expect(byYear[2026]).toBe(4)
     expect(byYear[2027]).toBe(1)
+  })
+})
+
+describe('segmentDays', () => {
+  it('classifies each day and groups consecutive runs', () => {
+    // 2026-05-01 Fri (holiday Labour Day), 05-02 Sat, 05-03 Sun, 05-04 Mon (leave).
+    const names = new Map([['2026-05-01', 'Labour Day']])
+    const segs = segmentDays('2026-05-01', '2026-05-04', names)
+    expect(segs).toEqual([
+      { kind: 'holiday', startDate: '2026-05-01', endDate: '2026-05-01', label: 'Labour Day', days: 1, leaveDays: 0 },
+      { kind: 'weekend', startDate: '2026-05-02', endDate: '2026-05-03', days: 2, leaveDays: 0 },
+      { kind: 'leave', startDate: '2026-05-04', endDate: '2026-05-04', days: 1, leaveDays: 1 },
+    ])
+  })
+
+  it('treats weekday holidays distinctly from leave', () => {
+    const segs = segmentDays('2026-05-04', '2026-05-05', new Map([['2026-05-05', 'X']]))
+    expect(segs.map((s) => s.kind)).toEqual(['leave', 'holiday'])
   })
 })
 
