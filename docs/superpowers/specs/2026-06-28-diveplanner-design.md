@@ -22,7 +22,8 @@ Hosted on Vercel. No backend. All state persisted in localStorage.
 | State | Zustand with `persist` middleware → localStorage |
 | UI | Shadcn/ui + Tailwind CSS |
 | Date math | `date-fns` |
-| URL compression | `lz-string` (compress) + base64 encode |
+| URL compression | `lz-string` `compressToEncodedURIComponent` / `decompressFromEncodedURIComponent` |
+| Test runner | Vitest + @testing-library/react (jsdom env; `bun run test`) |
 | Holiday data | Nager.Date public API (client-side fetch, session-cached) |
 | Deploy | Vercel (static SPA with catch-all → `index.html`) |
 
