@@ -1,0 +1,35 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import CalendarView from './CalendarView'
+import { useAppStore } from '@/store/useAppStore'
+import { DEFAULT_SETTINGS } from '@/types'
+
+beforeEach(() => {
+  useAppStore.setState({ trips: [], siteOverrides: [], settings: DEFAULT_SETTINGS, holidays: {}, holidaysLoading: false, holidaysError: false })
+})
+
+describe('CalendarView', () => {
+  it('renders 12 month headings for the rolling window', () => {
+    render(<CalendarView />)
+    expect(screen.getAllByRole('heading', { level: 2 }).length).toBe(12)
+  })
+
+  it('clicking a start then an end day fires onRangeSelected', async () => {
+    const onRangeSelected = vi.fn()
+    render(<CalendarView onRangeSelected={onRangeSelected} />)
+    const days = screen.getAllByRole('button', { name: /^day / })
+    await userEvent.click(days[10])
+    await userEvent.click(days[12])
+    expect(onRangeSelected).toHaveBeenCalledTimes(1)
+  })
+
+  it('readOnly disables day selection', async () => {
+    const onRangeSelected = vi.fn()
+    render(<CalendarView readOnly onRangeSelected={onRangeSelected} />)
+    const days = screen.getAllByRole('button', { name: /^day / })
+    await userEvent.click(days[10])
+    await userEvent.click(days[12])
+    expect(onRangeSelected).not.toHaveBeenCalled()
+  })
+})
