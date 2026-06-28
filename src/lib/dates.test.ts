@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { enumerateDays, isWeekday, durationDays, calendarWindow, formatISO } from './dates'
+import { enumerateDays, isWeekday, durationDays, calendarWindow, formatISO, monthsInRange } from './dates'
 
 describe('dates', () => {
   it('enumerateDays returns inclusive list', () => {
@@ -34,4 +34,9 @@ describe('dates', () => {
   it('formatISO formats a date', () => {
     expect(formatISO(new Date(2026, 4, 15))).toBe('2026-05-15')
   })
+})
+
+it('monthsInRange returns the unique months a range spans', () => {
+  expect(monthsInRange('2026-04-29', '2026-05-02')).toEqual([4, 5])
+  expect(monthsInRange('2026-05-10', '2026-05-12')).toEqual([5])
 })

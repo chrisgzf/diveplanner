@@ -8,6 +8,8 @@ import { hasOverlap } from '@/lib/overlap'
 import { leaveDaysByYear } from '@/lib/leave'
 import { estimatedDives } from '@/lib/dives'
 import { holidaySetFromCache } from '@/lib/holidays'
+import { monthsInRange } from '@/lib/dates'
+import { useMergedLocations } from '@/hooks/useMergedLocations'
 import type { BookingItem, Trip, TripStatus, TripType } from '@/types'
 
 const TYPES: TripType[] = ['fun-dive', 'course', 'liveaboard', 'non-dive']
@@ -59,6 +61,20 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
   const autoDives = start && end ? estimatedDives(type, start, end) : 0
   const allBooked = bookings.length > 0 && bookings.every((b) => b.booked)
 
+  const allLocations = useMergedLocations()
+  const conditions = useMemo(() => {
+    if (type === 'non-dive' || !start || !end) return { good: [] as string[], fair: [] as string[] }
+    const months = monthsInRange(start, end)
+    const good: string[] = []
+    const fair: string[] = []
+    for (const loc of allLocations) {
+      const ratings = months.map((m) => loc.seasonality.find((s) => s.month === m)?.rating)
+      if (ratings.includes('good')) good.push(loc.name)
+      else if (ratings.includes('fair')) fair.push(loc.name)
+    }
+    return { good, fair }
+  }, [type, start, end, allLocations])
+
   const onTypeChange = (t: TripType) => {
     setType(t)
     if (t === 'non-dive') setBookings([])
@@ -102,6 +118,18 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
 
         <LocationPicker value={locationId} customValue={customLocation}
           onChange={(id, custom) => { setLocationId(id); setCustomLocation(custom) }} />
+
+        {type !== 'non-dive' && (conditions.good.length > 0 || conditions.fair.length > 0) && (
+          <div className="rounded-md border border-line bg-surface-elevated p-3 text-xs">
+            <div className="mb-1 font-medium">Dive conditions</div>
+            {conditions.good.length > 0 && (
+              <div className="mb-1"><span className="font-semibold text-good">Good for diving</span><div className="text-muted">· {conditions.good.join(' · ')}</div></div>
+            )}
+            {conditions.fair.length > 0 && (
+              <div><span className="font-semibold text-fair">Fair</span><div className="text-muted">· {conditions.fair.join(' · ')}</div></div>
+            )}
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">

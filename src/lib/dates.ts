@@ -17,6 +17,12 @@ export function durationDays(start: ISODate, end: ISODate): number {
   return differenceInCalendarDays(parseISO(end), parseISO(start)) + 1
 }
 
+export function monthsInRange(start: ISODate, end: ISODate): number[] {
+  const set = new Set<number>()
+  for (const d of enumerateDays(start, end)) set.add(Number(d.slice(5, 7)))
+  return [...set].sort((a, b) => a - b)
+}
+
 export function calendarWindow(now: Date): { year: number; month: number }[] {
   const out: { year: number; month: number }[] = []
   const startY = now.getFullYear()
