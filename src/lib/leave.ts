@@ -1,18 +1,8 @@
 import { enumerateDays, isWeekday } from './dates'
 import type { ISODate, Trip } from '@/types'
-import { parseISO, format, addDays } from 'date-fns'
 
 function leaveDays(start: ISODate, end: ISODate, holidays: Set<ISODate>): ISODate[] {
-  let adjustedStart = start
-  const startDate = parseISO(start)
-  const dayOfWeek = startDate.getDay() // 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
-
-  // If start is Friday (5), Saturday (6), or Sunday (0), advance to next day
-  if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
-    adjustedStart = format(addDays(startDate, 1), 'yyyy-MM-dd') as ISODate
-  }
-
-  return enumerateDays(adjustedStart, end).filter((d) => isWeekday(d) && !holidays.has(d))
+  return enumerateDays(start, end).filter((d) => isWeekday(d) && !holidays.has(d))
 }
 
 export function leaveDaysInRange(start: ISODate, end: ISODate, holidays: Set<ISODate>): number {

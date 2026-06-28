@@ -5,17 +5,21 @@ import type { Trip } from '@/types'
 const noHols = new Set<string>()
 
 describe('leaveDaysInRange', () => {
-  it('counts weekdays only (Sat 15 May -> Sun 23 May 2026 = Mon-Fri 18-22 = 5)', () => {
-    expect(leaveDaysInRange('2026-05-15', '2026-05-23', noHols)).toBe(5)
+  it('counts weekdays only (Fri 15 May -> Sat 23 May 2026 = Fri 15, Mon-Fri 18-22 = 6)', () => {
+    expect(leaveDaysInRange('2026-05-15', '2026-05-23', noHols)).toBe(6)
   })
   it('subtracts public holidays falling on weekdays', () => {
-    // Hari Raya Haji Mon 2026-05-18 (hypothetical) reduces 5 -> 4
+    // Hari Raya Haji Mon 2026-05-18 (hypothetical) reduces 6 -> 5
     const hols = new Set(['2026-05-18'])
-    expect(leaveDaysInRange('2026-05-15', '2026-05-23', hols)).toBe(4)
+    expect(leaveDaysInRange('2026-05-15', '2026-05-23', hols)).toBe(5)
   })
   it('ignores holidays that fall on a weekend', () => {
     const hols = new Set(['2026-05-16']) // Saturday
-    expect(leaveDaysInRange('2026-05-15', '2026-05-23', hols)).toBe(5)
+    expect(leaveDaysInRange('2026-05-15', '2026-05-23', hols)).toBe(6)
+  })
+  it('counts Friday as a leave day when trip starts on Friday', () => {
+    // 2026-05-22 is a Friday; single-day trip = 1 leave day
+    expect(leaveDaysInRange('2026-05-22', '2026-05-22', noHols)).toBe(1)
   })
 })
 
@@ -35,6 +39,6 @@ describe('leaveUsedByYear', () => {
       { id: 'b', label: 'Italy', startDate: '2026-05-25', endDate: '2026-05-29', type: 'non-dive', status: 'planned', bookings: [] },
     ]
     const used = leaveUsedByYear(trips, noHols)
-    expect(used[2026]).toBe(5 + 5) // trip a: 5 weekdays; trip b: Mon-Fri = 5
+    expect(used[2026]).toBe(6 + 5) // trip a: 6 weekdays (Fri 15 + Mon-Fri 18-22); trip b: Mon-Fri = 5
   })
 })
