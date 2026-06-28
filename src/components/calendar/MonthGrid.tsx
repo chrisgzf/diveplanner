@@ -30,9 +30,9 @@ export default function MonthGrid({ year, month, trips, holidays, covered, today
   }
 
   return (
-    <section className="mb-8">
-      <h2 className="mb-2 font-display text-lg font-semibold">{MONTH_NAMES[month - 1]} {year}</h2>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted">
+    <section className="mb-2">
+      <h2 className="mb-1.5 font-display text-sm font-semibold">{MONTH_NAMES[month - 1]} {year}</h2>
+      <div className="grid grid-cols-7 gap-0.5 text-center text-[0.7rem] text-muted">
         {WEEKDAYS.map((w) => <div key={w} className="pb-1">{w}</div>)}
         {Array.from({ length: firstDow }, (_, i) => <div key={`pad-${i}`} />)}
         {Array.from({ length: daysInMonth }, (_, i) => {

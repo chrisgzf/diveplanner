@@ -59,7 +59,7 @@ export default function CalendarView({ readOnly = false, trips: tripsProp, holid
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {window.map(({ year, month }) => (
           <MonthGrid key={`${year}-${month}`} year={year} month={month}
             trips={trips} holidays={holidaySet} covered={covered} today={today}
