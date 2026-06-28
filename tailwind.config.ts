@@ -6,6 +6,7 @@ export default {
     extend: {
       colors: {
         surface: 'var(--surface)',
+        'surface-elevated': 'var(--surface-elevated)',
         ink: 'var(--ink)',
         muted: 'var(--muted)',
         line: 'var(--line)',
@@ -18,6 +19,18 @@ export default {
         course: 'var(--course)',
         liveaboard: 'var(--liveaboard)',
         'non-dive': 'var(--non-dive)',
+        // Shadcn bridge utilities (consumed by vendored ui/* components).
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        card: 'var(--card)',
+        'card-foreground': 'var(--card-foreground)',
+        popover: 'var(--popover)',
+        'popover-foreground': 'var(--popover-foreground)',
+        'primary-foreground': 'var(--primary-foreground)',
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+        'muted-foreground': 'var(--muted-foreground)',
       },
       fontFamily: {
         display: ['"Space Grotesk"', 'sans-serif'],

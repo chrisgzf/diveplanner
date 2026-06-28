@@ -6,6 +6,7 @@
 
 :root {
   --surface: #F2F7F8;
+  --surface-elevated: #FFFFFF;
   --ink: #0B1F2A;
   --muted: #5B7682;
   --line: #D7E3E6;
@@ -18,10 +19,34 @@
   --course: #0E9F6E;
   --liveaboard: #7C3AED;
   --non-dive: #8595A0;
+
+  /* Shadcn variable bridge → our semantic tokens. */
+  --background: var(--surface);
+  --foreground: var(--ink);
+  --card: var(--surface-elevated);
+  --card-foreground: var(--ink);
+  --popover: var(--surface-elevated);
+  --popover-foreground: var(--ink);
+  --primary-foreground: #FFFFFF;
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--primary);
+  --muted-foreground: var(--muted);
+}
+
+.dark {
+  --surface: #0D1E27;
+  --surface-elevated: #122B38;
+  --ink: #E8F4F6;
+  --muted: #7BA3AE;
+  --line: #1E3545;
+  --primary: #14A8B5;
+  --fair: #F5C030;
+  /* --good, --poor, --closed, and trip-type colours are readable on both backgrounds. */
 }
 
 @layer base {
-  html { color-scheme: light; }
+  html { color-scheme: light dark; }
   body {
     @apply bg-surface text-ink font-body antialiased;
   }
