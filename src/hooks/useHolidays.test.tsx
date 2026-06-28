@@ -10,7 +10,7 @@ beforeEach(() => {
 
 describe('useHolidays', () => {
   it('fetches current and next year into the session slice', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => [{ date: '2026-08-09' }] }))
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true, json: async () => [{ date: '2026-08-09', name: 'National Day' }] }))
     renderHook(() => useHolidays())
     await waitFor(() => {
       const keys = Object.keys(useAppStore.getState().holidays)

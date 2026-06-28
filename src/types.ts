@@ -1,4 +1,9 @@
 export type ISODate = string // ISO 8601 date, e.g. "2026-05-15"
+
+export interface HolidayEntry {
+  date: ISODate
+  name: string
+}
 export type TripStatus = 'wishlist' | 'planned' | 'confirmed'
 export type TripType = 'fun-dive' | 'course' | 'liveaboard' | 'non-dive'
 export type MonthRating = 'good' | 'fair' | 'poor' | 'closed'

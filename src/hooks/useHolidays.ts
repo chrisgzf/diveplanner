@@ -17,10 +17,10 @@ export function useHolidays() {
     clearHolidays()
     setLoading(true); setError(false)
 
-    Promise.all(years.map((y) => fetchHolidays(country, y).then((dates) => ({ y, dates }))))
+    Promise.all(years.map((y) => fetchHolidays(country, y).then((entries) => ({ y, entries }))))
       .then((results) => {
         if (cancelled) return
-        for (const { y, dates } of results) setHolidays(holidayKey(country, y), dates)
+        for (const { y, entries } of results) setHolidays(holidayKey(country, y), entries)
       })
       .catch(() => {
         if (cancelled) return

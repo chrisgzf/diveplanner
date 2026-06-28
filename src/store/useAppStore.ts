@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { DEFAULT_SETTINGS, type ISODate, type Location, type Settings, type Trip } from '@/types'
+import { DEFAULT_SETTINGS, type HolidayEntry, type Location, type Settings, type Trip } from '@/types'
 import type { ShareState } from '@/lib/share'
 
 interface AppStore {
   settings: Settings
   trips: Trip[]
   siteOverrides: Location[]
-  holidays: Record<string, ISODate[]>
+  holidays: Record<string, HolidayEntry[]>
   holidaysLoading: boolean
   holidaysError: boolean
 
@@ -17,7 +17,7 @@ interface AppStore {
   upsertOverride: (loc: Location) => void
   deleteOverride: (id: string) => void
   updateSettings: (patch: Partial<Settings>) => void
-  setHolidays: (key: string, dates: ISODate[]) => void
+  setHolidays: (key: string, entries: HolidayEntry[]) => void
   clearHolidays: () => void
   setHolidaysLoading: (b: boolean) => void
   setHolidaysError: (b: boolean) => void
@@ -44,7 +44,7 @@ export const useAppStore = create<AppStore>()(
         }),
       deleteOverride: (id) => set((s) => ({ siteOverrides: s.siteOverrides.filter((l) => l.id !== id) })),
       updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
-      setHolidays: (key, dates) => set((s) => ({ holidays: { ...s.holidays, [key]: dates } })),
+      setHolidays: (key, entries) => set((s) => ({ holidays: { ...s.holidays, [key]: entries } })),
       clearHolidays: () => set({ holidays: {} }),
       setHolidaysLoading: (b) => set({ holidaysLoading: b }),
       setHolidaysError: (b) => set({ holidaysError: b }),
