@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { calendarWindow, formatISO, enumerateDays } from '@/lib/dates'
-import { coveredDays } from '@/lib/overlap'
+import { coveredTripMap } from '@/lib/overlap'
 import { holidaySetFromCache } from '@/lib/holidays'
 import { useAppStore } from '@/store/useAppStore'
 import MonthGrid from './MonthGrid'
@@ -23,7 +23,7 @@ export default function CalendarView({ readOnly = false, trips: tripsProp, holid
   const window = useMemo(() => calendarWindow(new Date()), [])
   const today = formatISO(new Date())
   const holidaySet = useMemo(() => holidaySetFromCache(holidays), [holidays])
-  const covered = useMemo(() => coveredDays(trips), [trips])
+  const covered = useMemo(() => coveredTripMap(trips), [trips])
 
   // A preview that would cross a covered day is rejected (no overlap allowed).
   const previewValid = (end: string) => {

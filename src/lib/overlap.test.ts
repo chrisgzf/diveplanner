@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { rangesOverlap, hasOverlap, coveredDays } from './overlap'
+import { rangesOverlap, hasOverlap, coveredTripMap } from './overlap'
 import type { Trip } from '@/types'
 
 const trips: Trip[] = [
@@ -26,9 +26,11 @@ describe('hasOverlap', () => {
   })
 })
 
-describe('coveredDays', () => {
-  it('returns every day occupied by trips, minus excluded', () => {
-    expect(coveredDays(trips).has('2026-05-17')).toBe(true)
-    expect(coveredDays(trips, 'a').size).toBe(0)
+describe('coveredTripMap', () => {
+  it('maps every covered day to its owning trip, minus excluded', () => {
+    const map = coveredTripMap(trips)
+    expect(map.get('2026-05-17')?.id).toBe('a')
+    expect(map.size).toBe(6) // 15th–20th inclusive
+    expect(coveredTripMap(trips, 'a').size).toBe(0)
   })
 })

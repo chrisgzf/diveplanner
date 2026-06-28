@@ -11,7 +11,7 @@ function iso(year: number, month: number, day: number) {
 }
 
 export default function MonthGrid({ year, month, trips, holidays, covered, today, selection, readOnly, onDayEnter, onDayClick, onTripClick }: {
-  year: number; month: number; trips: Trip[]; holidays: Set<string>; covered: Set<string>; today: string
+  year: number; month: number; trips: Trip[]; holidays: Set<string>; covered: Map<string, Trip>; today: string
   selection: { start: string | null; end: string | null }; readOnly: boolean
   onDayEnter: (iso: string) => void; onDayClick: (iso: string) => void; onTripClick: (trip: Trip) => void
 }) {
@@ -39,7 +39,7 @@ export default function MonthGrid({ year, month, trips, holidays, covered, today
           return (
             <DayCell key={d} iso={d} day={day}
               inRange={inRange(d)} isStart={selection.start === d} isEnd={selection.end === d}
-              isHoliday={holidays.has(d)} isCovered={covered.has(d)} isToday={today === d} readOnly={readOnly}
+              isHoliday={holidays.has(d)} coveredByTrip={covered.get(d)} isToday={today === d} readOnly={readOnly}
               onMouseEnter={() => onDayEnter(d)} onClick={() => onDayClick(d)} />
           )
         })}
