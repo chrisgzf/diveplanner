@@ -87,17 +87,17 @@ export default function TripDrawer({ open, mode, initialRange, trip, defaultLoca
           <div className="space-y-1">
             <label htmlFor="trip-name" className="text-sm font-medium">Trip name</label>
             <input id="trip-name" value={label} onChange={(e) => setLabel(e.target.value)}
-              className="w-full rounded-md border border-line bg-white px-2 py-2 text-sm" placeholder="Malapascua May 2026" />
+              className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" placeholder="Malapascua May 2026" />
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
               <label htmlFor="start" className="text-sm font-medium">Start</label>
-              <input id="start" type="date" value={start} onChange={(e) => setStart(e.target.value)} className="w-full rounded-md border border-line bg-white px-2 py-2 text-sm" />
+              <input id="start" type="date" value={start} onChange={(e) => setStart(e.target.value)} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" />
             </div>
             <div className="space-y-1">
               <label htmlFor="end" className="text-sm font-medium">End</label>
-              <input id="end" type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="w-full rounded-md border border-line bg-white px-2 py-2 text-sm" />
+              <input id="end" type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" />
             </div>
           </div>
 
@@ -106,13 +106,13 @@ export default function TripDrawer({ open, mode, initialRange, trip, defaultLoca
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
               <label htmlFor="type" className="text-sm font-medium">Trip type</label>
-              <select id="type" value={type} onChange={(e) => onTypeChange(e.target.value as TripType)} className="w-full rounded-md border border-line bg-white px-2 py-2 text-sm">
+              <select id="type" value={type} onChange={(e) => onTypeChange(e.target.value as TripType)} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm">
                 {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div className="space-y-1">
               <label htmlFor="status" className="text-sm font-medium">Status</label>
-              <select id="status" value={status} onChange={(e) => setStatus(e.target.value as TripStatus)} className="w-full rounded-md border border-line bg-white px-2 py-2 text-sm">
+              <select id="status" value={status} onChange={(e) => setStatus(e.target.value as TripStatus)} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm">
                 {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
@@ -128,10 +128,10 @@ export default function TripDrawer({ open, mode, initialRange, trip, defaultLoca
 
           <div className="space-y-1">
             <label htmlFor="notes" className="text-sm font-medium">Notes</label>
-            <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="w-full rounded-md border border-line bg-white px-2 py-2 text-sm" />
+            <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" />
           </div>
 
-          <div className="rounded-md border border-line bg-white p-3 font-mono text-xs">
+          <div className="rounded-md border border-line bg-surface-elevated p-3 font-mono text-xs">
             <div>Leave: {Object.entries(leaveByYear).map(([y, n]) => `${y}: ${n}d`).join('  ·  ') || '0d'}</div>
             <div className="mt-1 flex items-center gap-2">
               <span>Dives: {diveOverride ?? autoDives}</span>

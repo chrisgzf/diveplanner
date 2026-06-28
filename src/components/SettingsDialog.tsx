@@ -19,7 +19,7 @@ export default function SettingsDialog() {
         <div className="space-y-4">
           <div className="space-y-1">
             <label htmlFor="country" className="text-sm font-medium">Country (for public holidays)</label>
-            <select id="country" value={settings.country} onChange={(e) => updateSettings({ country: e.target.value })} className="w-full rounded-md border border-line px-2 py-2 text-sm">
+            <select id="country" value={settings.country} onChange={(e) => updateSettings({ country: e.target.value })} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm">
               {SUPPORTED_COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
             </select>
           </div>
@@ -29,7 +29,7 @@ export default function SettingsDialog() {
               <input id={`leave-${year}`} type="number" min={0}
                 value={settings.leaveBudget[year] ?? 0}
                 onChange={(e) => updateSettings({ leaveBudget: { ...settings.leaveBudget, [year]: Number(e.target.value) } })}
-                className="w-full rounded-md border border-line px-2 py-2 text-sm" />
+                className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" />
             </div>
           ))}
         </div>

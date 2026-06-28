@@ -33,3 +33,7 @@ describe('useAppStore', () => {
     expect(useAppStore.getState().settings.leaveBudget[2026]).toBe(40)
   })
 })
+
+it('defaults theme to dark', () => {
+  expect(DEFAULT_SETTINGS.theme).toBe('dark')
+})

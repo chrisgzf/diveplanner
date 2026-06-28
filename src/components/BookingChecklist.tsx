@@ -14,10 +14,10 @@ export default function BookingChecklist({ items, onChange }: { items: BookingIt
       {items.map((it) => (
         <div key={it.id} className="flex items-center gap-2">
           <input type="checkbox" checked={it.booked} onChange={(e) => update(it.id, { booked: e.target.checked })} aria-label={`booked ${it.label || it.category}`} />
-          <select value={it.category} onChange={(e) => update(it.id, { category: e.target.value as BookingCategory })} className="rounded-md border border-line bg-white px-2 py-1 text-sm">
+          <select value={it.category} onChange={(e) => update(it.id, { category: e.target.value as BookingCategory })} className="rounded-md border border-line bg-surface-elevated px-2 py-1 text-sm">
             {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
-          <input value={it.label} onChange={(e) => update(it.id, { label: e.target.value })} placeholder="e.g. Blahblah Divers" className="flex-1 rounded-md border border-line bg-white px-2 py-1 text-sm" />
+          <input value={it.label} onChange={(e) => update(it.id, { label: e.target.value })} placeholder="e.g. Blahblah Divers" className="flex-1 rounded-md border border-line bg-surface-elevated px-2 py-1 text-sm" />
           <button type="button" onClick={() => remove(it.id)} aria-label="remove item"><Trash2 className="h-4 w-4 text-muted" /></button>
         </div>
       ))}

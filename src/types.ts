@@ -49,10 +49,12 @@ export interface Location {
 export interface Settings {
   country: string // ISO 3166-1 alpha-2
   leaveBudget: Record<number, number> // days available per calendar year (includes any carryover)
+  theme: 'dark' | 'light'
 }
 
 const _year = new Date().getFullYear()
 export const DEFAULT_SETTINGS: Settings = {
   country: 'SG',
   leaveBudget: { [_year]: 25, [_year + 1]: 25 },
+  theme: 'dark',
 }
