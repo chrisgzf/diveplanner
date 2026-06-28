@@ -75,54 +75,53 @@
 - **Review:** Clean
 - **Files created:** src/lib/locations.ts, src/lib/locations.test.ts (3 tests)
 
-### ⬜ Task 8: Share encode/decode (lib/share.ts)
-- **Files to create:** src/lib/share.ts, src/lib/share.test.ts
-- **Key interfaces:** `ShareState`, `encodeShare`, `decodeShare`
-- **CRITICAL:** Must use lz-string `compressToEncodedURIComponent` — never plain base64.
+### ✅ Task 8: Share encode/decode (lib/share.ts)
+- **Commit:** `cd56fc9` — feat: add lz-string share encode/decode
+- **Review:** Clean
 
-### ⬜ Task 9: Holiday fetch service (lib/holidays.ts)
-- **Files to create:** src/lib/holidays.ts, src/lib/holidays.test.ts
+### ✅ Task 9: Holiday fetch service (lib/holidays.ts)
+- **Commit:** `e96ded1` — feat: add Nager.Date holiday fetch service
+- **Review:** Clean
 
-### ⬜ Task 10: Zustand store (store/useAppStore.ts)
-- **Files to create:** src/store/useAppStore.ts, src/store/useAppStore.test.ts
-- **Persist config:** name `'diveplanner'`, partialize to persist only settings/trips/siteOverrides (NOT holidays session slice).
+### ✅ Task 10: Zustand store (store/useAppStore.ts)
+- **Commit:** `80797d7` — feat: add zustand persist store
+- **Review:** Clean (leaveBudget deviation from brief applied correctly)
 
-### ⬜ Task 11: App shell, routing, nav, theme wiring
-- **shadcn install (do this first in Task 11):** `bunx --bun shadcn@latest add button dialog sheet input label select checkbox textarea badge toast sonner tabs popover command`
-- **Files to create:** src/components/Nav.tsx, src/routes/PlannerPage.tsx, src/routes/LocationsPage.tsx, src/routes/SharePage.tsx
-- **Files to modify:** src/App.tsx, src/main.tsx
+### ✅ Task 11: App shell, routing, nav, theme wiring
+- **Commit:** `658e3ff` — feat: add app shell, routing, and nav
+- **Review:** Clean (minor: aria-hidden mobile nav for jsdom compat, shadcn artifacts)
 
-### ⬜ Task 12: Leave Balance Bar (signature gauge)
-- **Files to create:** src/hooks/useLeaveByYear.ts, src/components/LeaveBalanceBar.tsx
-- **Files to modify:** src/App.tsx (mount bar under Nav)
-- **Signature element:** per-year tank gauge, green→amber(≤5 days left)→red(0), monospace readout
+### ✅ Task 12: Leave Balance Bar (signature gauge)
+- **Commit:** `2084f8c` — feat: add per-year leave balance gauge
+- **Review:** Clean (leaveBudget deviation from brief applied correctly)
 
-### ⬜ Task 13: Calendar view + range selection
-- **Files to create:** src/components/calendar/CalendarView.tsx, MonthGrid.tsx, DayCell.tsx, TripBlock.tsx
-- **Files to modify:** src/routes/PlannerPage.tsx
+### ✅ Task 13: Calendar view + range selection
+- **Commit:** `d0c9f45` — feat: add rolling calendar with range selection
+- **Review:** Clean (minor: _pending/_editing names, window shadow, today memo)
 
-### ⬜ Task 14: Trip create/edit drawer + booking checklist + location picker
-- **Files to create:** src/components/TripDrawer.tsx, BookingChecklist.tsx, LocationPicker.tsx, src/hooks/useMergedLocations.ts
-- **Files to modify:** src/routes/PlannerPage.tsx
+### ✅ Task 14: Trip create/edit drawer + booking checklist + location picker
+- **Commit:** `36f9eec` — feat: add trip create/edit drawer with booking checklist
+- **Review:** Clean (minor: test 3 spec debt)
 
-### ⬜ Task 15: Locations explorer page
-- **Files to create:** src/components/AddLocationDialog.tsx, src/components/SeasonalityGrid.tsx
-- **Files to modify:** src/routes/LocationsPage.tsx
-- **Test:** src/routes/LocationsPage.test.tsx
+### ✅ Task 15: Locations explorer page
+- **Commit:** `8b14f61` — feat: add locations explorer with custom locations and export
+- **Review:** Clean
 
-### ⬜ Task 16: Settings dialog
-- **Files to create:** src/components/SettingsDialog.tsx
-- **Files to modify:** src/components/Nav.tsx, src/App.tsx
+### ✅ Task 16: Settings dialog
+- **Commit:** `c53777c` — feat: add settings dialog
+- **Review:** Clean (per-year leaveBudget inputs, deviation from brief accepted)
 
-### ⬜ Task 17: Share button + share view route
-- **Files to create:** src/components/ShareButton.tsx
-- **Files to modify:** src/routes/SharePage.tsx, src/App.tsx
-- **Note (Task 17 Step 7):** Refactor CalendarView to accept optional `trips?` and `holidays?` props that override the store when provided (default to store). This lets SharePage render a read-only shared view without mutating the user's store.
+### ✅ Task 17: Share button + share view route
+- **Commits:** `9a3584d` + `7daab04` (fix: store-isolation test)
+- **Review:** Clean after fix (CalendarView prop override, SharePage read-only)
 
-### ⬜ Task 18: Holiday hook wiring + final integration + build verification
-- **Files to create:** src/hooks/useHolidays.ts
-- **Files to modify:** src/App.tsx
-- **Final steps:** `bun run test` (all pass) + `bun run build` (clean) + update spec doc (lz-string table entry)
+### ✅ Task 18: Holiday hook wiring + final integration + build verification
+- **Commit:** `079248b` — feat: wire holiday fetching and finalize integration
+- **Review:** Clean; 57/57 tests; build clean; spec doc updated
+
+### ✅ Final review fixes
+- **Commit:** `b8d0fa0` — fix: clear stale holidays on country change, add date validation to trip save
+- **Final whole-branch review:** ✅ Ready to merge
 
 ## Design Decision: Per-year leave budget (RESOLVED)
 
@@ -138,20 +137,15 @@
 ## Current git HEAD
 
 ```
-f7b3ff3 feat: change Settings to per-year leaveBudget record
-2d4c0bf feat: add estimated dives calculation
-77cc289 fix: remove unauthorized start-date mutation from leave calculation
-302ba7e feat: add per-year leave calculation
-2bbe17b feat: add date helper utilities
-f33986b feat: add domain types and bundled location/country data
-a43ae6c chore: scaffold Bun + Vite + React 18 + TS + Tailwind + Vitest
-5f1d8b8 Add project scaffolding: README, LICENSE, AGENTS.md, gitignore
+b8d0fa0 fix: clear stale holidays on country change, add date validation to trip save
+079248b feat: wire holiday fetching and finalize integration
+7daab04 test: add CalendarView store-isolation test for SharePage
+9a3584d feat: add share button and read-only share view
+c53777c feat: add settings dialog
+8b14f61 feat: add locations explorer with custom locations and export
 ```
 
-## Test Suite State (as of Task 4 complete)
+## Test Suite State (as of Task 18 + final fixes complete)
 
-`bun run test` → 16/16 passing across:
-- src/lib/cn.test.ts (1)
-- src/data/locations.test.ts (3)
-- src/lib/dates.test.ts (6)
+`bun run test` → 57/57 passing across 19 test files (all tasks complete)
 - src/lib/leave.test.ts (6)
