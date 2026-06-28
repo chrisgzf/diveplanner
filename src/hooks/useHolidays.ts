@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { toast } from 'sonner'
 import { useAppStore } from '@/store/useAppStore'
-import { fetchHolidays, holidayKey } from '@/lib/holidays'
+import { fetchHolidays, holidayKey, applySubstituteHolidays } from '@/lib/holidays'
 
 export function useHolidays() {
   const country = useAppStore((s) => s.settings.country)
@@ -20,7 +20,7 @@ export function useHolidays() {
     Promise.all(years.map((y) => fetchHolidays(country, y).then((entries) => ({ y, entries }))))
       .then((results) => {
         if (cancelled) return
-        for (const { y, entries } of results) setHolidays(holidayKey(country, y), entries)
+        for (const { y, entries } of results) setHolidays(holidayKey(country, y), applySubstituteHolidays(entries))
       })
       .catch(() => {
         if (cancelled) return

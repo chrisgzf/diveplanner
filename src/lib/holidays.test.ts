@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { holidayKey, nagerUrl, parseHolidays, fetchHolidays, holidaySetFromCache, holidayNameMap } from './holidays'
+import { holidayKey, nagerUrl, parseHolidays, fetchHolidays, holidaySetFromCache, holidayNameMap, applySubstituteHolidays } from './holidays'
 
 afterEach(() => vi.restoreAllMocks())
 
@@ -32,5 +32,35 @@ describe('holiday helpers', () => {
   it('fetchHolidays throws on HTTP error', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 500 }))
     await expect(fetchHolidays('SG', 2026)).rejects.toThrow()
+  })
+})
+
+describe('applySubstituteHolidays', () => {
+  it('moves a Saturday holiday to the following Monday', () => {
+    // 2026-05-02 is a Saturday.
+    const out = applySubstituteHolidays([{ date: '2026-05-02', name: 'Labour Day' }])
+    expect(out).toContainEqual({ date: '2026-05-02', name: 'Labour Day' }) // original kept
+    expect(out).toContainEqual({ date: '2026-05-04', name: 'Labour Day (substitute)' }) // Monday
+  })
+  it('chains substitutes for a Sat+Sun pair (Sat→Mon, Sun→Tue)', () => {
+    // 2026-08-15 Sat, 2026-08-16 Sun.
+    const out = applySubstituteHolidays([
+      { date: '2026-08-15', name: 'A' },
+      { date: '2026-08-16', name: 'B' },
+    ])
+    expect(out).toContainEqual({ date: '2026-08-17', name: 'A (substitute)' }) // Mon
+    expect(out).toContainEqual({ date: '2026-08-18', name: 'B (substitute)' }) // Tue
+  })
+  it('skips a weekday already occupied by an original holiday', () => {
+    // 2026-08-15 Sat; Mon 2026-08-17 is already a holiday → substitute lands on Tue.
+    const out = applySubstituteHolidays([
+      { date: '2026-08-15', name: 'A' },
+      { date: '2026-08-17', name: 'Existing Monday' },
+    ])
+    expect(out).toContainEqual({ date: '2026-08-18', name: 'A (substitute)' })
+  })
+  it('leaves weekday holidays untouched', () => {
+    const out = applySubstituteHolidays([{ date: '2026-05-01', name: 'Labour Day' }]) // Friday
+    expect(out).toEqual([{ date: '2026-05-01', name: 'Labour Day' }])
   })
 })
