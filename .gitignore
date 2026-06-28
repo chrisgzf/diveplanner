@@ -36,6 +36,12 @@ coverage/
 vite.config.d.ts
 vite.config.js
 
+# Installed agent skills — materialized from skills-lock.json (committed).
+# Run `bunx --bun skills add <source>` to restore. The .claude/skills symlink
+# points at an absolute machine path, so it must never be committed.
+.agents/
+.claude/skills/
+
 # Editor / OS
 .vscode/*
 !.vscode/extensions.json

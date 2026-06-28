@@ -5,11 +5,12 @@
 ## How to Resume
 
 1. Read this file top to bottom.
-2. Read `docs/superpowers/plans/2026-06-28-diveplanner-implementation.md` (the implementation plan).
-3. Invoke the `superpowers:subagent-driven-development` skill.
-4. Check `.superpowers/sdd/progress.md` for the ledger (authoritative commit record).
-5. Resume at the first unchecked task below. Do NOT re-do completed tasks.
-6. For each task: extract brief → dispatch implementer subagent → generate review package → dispatch reviewer → fix if needed → mark complete → append to ledger → next task.
+2. **Load the `shadcn` skill (Skill tool) before any UI work** — it is installed in this repo (pinned via `skills-lock.json`). Use it for all shadcn component adds/edits; never hand-write or fetch component source. See Global Constraints.
+3. Read `docs/superpowers/plans/2026-06-28-diveplanner-implementation.md` (the implementation plan).
+4. Invoke the `superpowers:subagent-driven-development` skill.
+5. Check `.superpowers/sdd/progress.md` for the ledger (authoritative commit record).
+6. Resume at the first unchecked task below. Do NOT re-do completed tasks.
+7. For each task: extract brief → dispatch implementer subagent → generate review package → dispatch reviewer → fix if needed → mark complete → append to ledger → next task.
 
 ## SDD Workflow Summary
 
@@ -25,6 +26,7 @@
 ## Global Constraints (apply to every task)
 
 - Bun only. Only `bun.lock` (no npm/pnpm/yarn lockfiles).
+- **shadcn skill is mandatory for UI work.** It is installed in this repo and pinned via `skills-lock.json`. Always load it (Skill tool) before adding or editing shadcn components. Add components with `bunx --bun shadcn@latest add <name>` (preview first with `--dry-run`/`--diff`); never hand-write component source or fetch raw files from GitHub. Project is Tailwind **v3** → register custom colors in `tailwind.config.ts` (not `@theme inline`); CSS variables live in `src/index.css`. If `.agents/skills/shadcn` is missing (e.g. fresh clone), restore with `bunx --bun skills add shadcn/ui`.
 - Vite stock (NOT Rolldown). React 18 (not 19). TypeScript strict mode.
 - Share URLs: `lz-string` `compressToEncodedURIComponent` / `decompressFromEncodedURIComponent` — never plain base64.
 - Trip date ranges must not overlap. Leave is per calendar year (Dec 31 split). Seasonality is month-only (12 ratings/site). `non-dive` trips: no booking checklist, 0 estimated dives.
