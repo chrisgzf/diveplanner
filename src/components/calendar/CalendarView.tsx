@@ -4,15 +4,19 @@ import { coveredDays } from '@/lib/overlap'
 import { holidaySetFromCache } from '@/lib/holidays'
 import { useAppStore } from '@/store/useAppStore'
 import MonthGrid from './MonthGrid'
-import type { Trip } from '@/types'
+import type { Trip, ISODate } from '@/types'
 
-export default function CalendarView({ readOnly = false, onRangeSelected, onTripClick }: {
+export default function CalendarView({ readOnly = false, trips: tripsProp, holidays: holidaysProp, onRangeSelected, onTripClick }: {
   readOnly?: boolean
+  trips?: Trip[]
+  holidays?: Record<string, ISODate[]>
   onRangeSelected?: (start: string, end: string) => void
   onTripClick?: (trip: Trip) => void
 }) {
-  const trips = useAppStore((s) => s.trips)
-  const holidays = useAppStore((s) => s.holidays)
+  const storeTrips = useAppStore((s) => s.trips)
+  const storeHolidays = useAppStore((s) => s.holidays)
+  const trips = tripsProp ?? storeTrips
+  const holidays = holidaysProp ?? storeHolidays
   const [anchor, setAnchor] = useState<string | null>(null)
   const [hover, setHover] = useState<string | null>(null)
 
