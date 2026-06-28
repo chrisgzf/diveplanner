@@ -25,6 +25,7 @@ export interface Trip {
   type: TripType
   status: TripStatus
   locationId?: string
+  customLocation?: string // used when no known locationId is selected
   bookings: BookingItem[]
   notes?: string
   estimatedDives?: number

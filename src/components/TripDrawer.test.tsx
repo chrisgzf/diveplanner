@@ -34,6 +34,15 @@ describe('TripDrawer', () => {
     expect(screen.getByText(/booking checklist/i)).toBeInTheDocument()
   })
 
+  it('saves a custom location when "Other…" is chosen', async () => {
+    render(<TripDrawer open mode="create" initialRange={{ start: '2026-07-01', end: '2026-07-03' }} onClose={() => {}} />)
+    await userEvent.selectOptions(screen.getByLabelText('Location'), '__other__')
+    await userEvent.type(screen.getByLabelText(/custom location/i), 'Secret Reef')
+    await userEvent.click(screen.getByRole('button', { name: /save/i }))
+    expect(useAppStore.getState().trips[0].customLocation).toBe('Secret Reef')
+    expect(useAppStore.getState().trips[0].locationId).toBeUndefined()
+  })
+
   it('uses the new placeholders, inclusive date labels, and wishlist default', () => {
     render(<TripDrawer open mode="create" initialRange={{ start: '2026-05-15', end: '2026-05-23' }} onClose={() => {}} />)
     expect(screen.getByPlaceholderText('e.g. Malapascua May 2026')).toBeInTheDocument()

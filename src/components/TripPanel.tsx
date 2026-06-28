@@ -35,6 +35,7 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
   const [type, setType] = useState<TripType>('fun-dive')
   const [status, setStatus] = useState<TripStatus>('wishlist')
   const [locationId, setLocationId] = useState<string | undefined>(undefined)
+  const [customLocation, setCustomLocation] = useState<string | undefined>(undefined)
   const [bookings, setBookings] = useState<BookingItem[]>([])
   const [notes, setNotes] = useState('')
   const [diveOverride, setDiveOverride] = useState<number | undefined>(undefined)
@@ -43,11 +44,11 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
   useEffect(() => {
     if (mode === 'edit' && trip) {
       setLabel(trip.label); setStart(trip.startDate); setEnd(trip.endDate); setType(trip.type)
-      setStatus(trip.status); setLocationId(trip.locationId); setBookings(trip.bookings)
+      setStatus(trip.status); setLocationId(trip.locationId); setCustomLocation(trip.customLocation); setBookings(trip.bookings)
       setNotes(trip.notes ?? ''); setDiveOverride(trip.estimatedDives)
     } else if (initialRange) {
       setLabel(''); setStart(initialRange.start); setEnd(initialRange.end); setType('fun-dive')
-      setStatus('wishlist'); setLocationId(defaultLocationId); setBookings(seedBookings('fun-dive'))
+      setStatus('wishlist'); setLocationId(defaultLocationId); setCustomLocation(undefined); setBookings(seedBookings('fun-dive'))
       setNotes(''); setDiveOverride(undefined)
     }
     setError('')
@@ -70,7 +71,8 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
     if (hasOverlap(trips, start, end, id)) { setError('This range overlaps another trip.'); return }
     const next: Trip = {
       id, label: label.trim() || 'Untitled trip', startDate: start, endDate: end, type, status,
-      locationId, bookings: type === 'non-dive' ? [] : bookings, notes: notes.trim() || undefined,
+      locationId, customLocation: customLocation?.trim() || undefined,
+      bookings: type === 'non-dive' ? [] : bookings, notes: notes.trim() || undefined,
       estimatedDives: diveOverride,
     }
     mode === 'edit' ? updateTrip(next) : addTrip(next)
@@ -98,7 +100,8 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
           </div>
         </div>
 
-        <LocationPicker value={locationId} onChange={setLocationId} />
+        <LocationPicker value={locationId} customValue={customLocation}
+          onChange={(id, custom) => { setLocationId(id); setCustomLocation(custom) }} />
 
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
