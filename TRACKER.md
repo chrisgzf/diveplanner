@@ -70,9 +70,10 @@
 - **Review:** Clean
 - **Files created:** src/lib/overlap.ts, src/lib/overlap.test.ts (5 tests)
 
-### ⬜ Task 7: Location merge (lib/locations.ts)
-- **Files to create:** src/lib/locations.ts, src/lib/locations.test.ts
-- **Key interfaces:** `mergeLocations(overrides: Location[]): Location[]`
+### ✅ Task 7: Location merge (lib/locations.ts)
+- **Commit:** `9bfbfea` — feat: add location merge (base + overrides)
+- **Review:** Clean
+- **Files created:** src/lib/locations.ts, src/lib/locations.test.ts (3 tests)
 
 ### ⬜ Task 8: Share encode/decode (lib/share.ts)
 - **Files to create:** src/lib/share.ts, src/lib/share.test.ts
