@@ -138,11 +138,29 @@
 
 ## UI v2 — Next Steps
 
-### Status: Design complete → Plan needed
+### Status: Plan complete → Ready to execute (SDD)
 
 - **Spec:** `docs/superpowers/specs/2026-06-28-ui-v2-design.md` (committed `b2164d5`)
-- **Next action:** Invoke `superpowers:writing-plans` skill to produce an implementation plan for the UI v2 spec. The plan should decompose the work into SDD-compatible tasks and live at `docs/superpowers/plans/2026-06-28-ui-v2-implementation.md`.
-- **Then:** Resume SDD workflow using that plan (update this tracker with task entries as each task is dispatched and completed).
+- **Plan:** `docs/superpowers/plans/2026-06-28-ui-v2-implementation.md` — 14 SDD tasks, full TDD steps + code.
+- **Next action:** Resume the SDD workflow (`superpowers:subagent-driven-development`) at UI v2 Task 1. **Load the `shadcn` skill first** (mandatory for UI work — see Global Constraints). Add the tooltip component in Task 5 via `bunx --bun shadcn@latest add tooltip`.
+- **As each task completes:** add a task entry below with its commit + review outcome.
+
+### UI v2 Task Status (plan: 2026-06-28-ui-v2-implementation.md)
+
+- [ ] Task 1: HolidayEntry type + holiday parsing & name-map migration
+- [ ] Task 2: Substitute holiday logic (`applySubstituteHolidays`)
+- [ ] Task 3: `calendarWindow` replaces `monthsWindow`
+- [ ] Task 4: Covered-trip map + full-colour cells + amber holiday underline
+- [ ] Task 5: Day hover tooltip (`DayMeta` + shadcn Tooltip)
+- [ ] Task 6: Dark-mode tokens & shadcn variable bridge
+- [ ] Task 7: Theme setting, App effect & `bg-white` audit
+- [ ] Task 8: Responsive top nav + sticky leave bar + theme toggle
+- [ ] Task 9: Compact 3-column calendar grid
+- [ ] Task 10: Extract `TripPanel` + inline split panel
+- [ ] Task 11: Trip drawer form field improvements
+- [ ] Task 12: Location "Other" + `customLocation`
+- [ ] Task 13: Seasonality panel in the trip drawer
+- [ ] Task 14: Segmented leave breakdown
 
 ### UI v2 change groups (summary)
 1. Layout & nav — sticky header, 3-col compact calendar (currentMonth → Dec currentYear+1), inline split panel, responsive top nav (no bottom tab bar), sun/moon toggle
