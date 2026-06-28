@@ -105,11 +105,13 @@ interface Location {
 
 ```ts
 interface Settings {
-  country: string           // ISO 3166-1 alpha-2, default "SG"
-  totalLeaveDays: number    // default 25
-  carryoverDays: number     // default 5
+  country: string                   // ISO 3166-1 alpha-2, default "SG"
+  leaveBudget: Record<number, number> // days available per calendar year (includes any carryover)
+                                    // default: { [currentYear]: 25, [currentYear+1]: 25 }
 }
 ```
+
+> **Design note (2026-06-28):** `leaveBudget` replaces the former `totalLeaveDays` + `carryoverDays` flat fields. Per-year budgets let users model different entitlements across years (e.g. 25 days in 2026, 28 in 2027 after a promotion, plus carryover already folded in). If a year has no entry, `useLeaveByYear` treats it as 0 days budgeted.
 
 ### Zustand Store Structure
 
@@ -203,7 +205,7 @@ Displays calculated:
 Leave is tracked **per calendar year** (it resets and carries over annually). The rolling 12-month window usually spans two years, so the bar shows both years it currently overlaps, side by side.
 
 For each shown year:
-- Total = `totalLeaveDays + carryoverDays` (default 30)
+- Total = `settings.leaveBudget[year] ?? 0`
 - Used = sum of leave days **falling within that year** across all trips and non-dive blocks. A trip crossing Dec 31 contributes its pre-Jan-1 leave days to the earlier year and the rest to the later year.
 - Remaining = Total − Used
 - Colour: green → amber (≤5 days) → red (0 days), evaluated per year
@@ -248,8 +250,7 @@ Accessible via the "Settings" nav item. Rendered as a Shadcn Dialog (modal) rath
 
 Fields:
 - **Country** — dropdown of supported countries for holiday data (Singapore default; includes Malaysia, Philippines, Indonesia, Thailand, Japan as initial set)
-- **Total leave days** — number input (default 25)
-- **Carryover days** — number input (default 5)
+- **Leave budget** — per-year number inputs, one row per year in the rolling 12-month window (e.g. "2026: [25]  2027: [25]"). User sets the total available days for each year (carryover is folded into this figure).
 
 Changes are saved immediately to the Zustand store (and therefore localStorage). The leave balance bar and all leave calculations update reactively.
 

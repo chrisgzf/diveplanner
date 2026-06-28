@@ -43,12 +43,11 @@ export interface Location {
 
 export interface Settings {
   country: string // ISO 3166-1 alpha-2
-  totalLeaveDays: number
-  carryoverDays: number
+  leaveBudget: Record<number, number> // days available per calendar year (includes any carryover)
 }
 
+const _year = new Date().getFullYear()
 export const DEFAULT_SETTINGS: Settings = {
   country: 'SG',
-  totalLeaveDays: 25,
-  carryoverDays: 5,
+  leaveBudget: { [_year]: 25, [_year + 1]: 25 },
 }
