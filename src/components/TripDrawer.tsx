@@ -67,6 +67,7 @@ export default function TripDrawer({ open, mode, initialRange, trip, defaultLoca
   }
 
   const save = () => {
+    if (!start || !end || start > end) { setError('Please enter a valid date range.'); return }
     const id = mode === 'edit' && trip ? trip.id : crypto.randomUUID()
     if (hasOverlap(trips, start, end, id)) { setError('This range overlaps another trip.'); return }
     const next: Trip = {

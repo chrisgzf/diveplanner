@@ -18,6 +18,7 @@ interface AppStore {
   deleteOverride: (id: string) => void
   updateSettings: (patch: Partial<Settings>) => void
   setHolidays: (key: string, dates: ISODate[]) => void
+  clearHolidays: () => void
   setHolidaysLoading: (b: boolean) => void
   setHolidaysError: (b: boolean) => void
   replaceAll: (state: ShareState) => void
@@ -44,6 +45,7 @@ export const useAppStore = create<AppStore>()(
       deleteOverride: (id) => set((s) => ({ siteOverrides: s.siteOverrides.filter((l) => l.id !== id) })),
       updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
       setHolidays: (key, dates) => set((s) => ({ holidays: { ...s.holidays, [key]: dates } })),
+      clearHolidays: () => set({ holidays: {} }),
       setHolidaysLoading: (b) => set({ holidaysLoading: b }),
       setHolidaysError: (b) => set({ holidaysError: b }),
       replaceAll: (state) => set({ trips: state.trips, siteOverrides: state.siteOverrides, settings: state.settings }),

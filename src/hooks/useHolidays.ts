@@ -6,6 +6,7 @@ import { fetchHolidays, holidayKey } from '@/lib/holidays'
 export function useHolidays() {
   const country = useAppStore((s) => s.settings.country)
   const setHolidays = useAppStore((s) => s.setHolidays)
+  const clearHolidays = useAppStore((s) => s.clearHolidays)
   const setLoading = useAppStore((s) => s.setHolidaysLoading)
   const setError = useAppStore((s) => s.setHolidaysError)
 
@@ -13,6 +14,7 @@ export function useHolidays() {
     let cancelled = false
     const year = new Date().getFullYear()
     const years = [year, year + 1]
+    clearHolidays()
     setLoading(true); setError(false)
 
     Promise.all(years.map((y) => fetchHolidays(country, y).then((dates) => ({ y, dates }))))
@@ -28,5 +30,5 @@ export function useHolidays() {
       .finally(() => { if (!cancelled) setLoading(false) })
 
     return () => { cancelled = true }
-  }, [country, setHolidays, setLoading, setError])
+  }, [country, setHolidays, clearHolidays, setLoading, setError])
 }
