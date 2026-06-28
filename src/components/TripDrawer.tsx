@@ -21,11 +21,12 @@ function seedBookings(type: TripType): BookingItem[] {
   ]
 }
 
-export default function TripDrawer({ open, mode, initialRange, trip, onClose }: {
+export default function TripDrawer({ open, mode, initialRange, trip, defaultLocationId, onClose }: {
   open: boolean
   mode: 'create' | 'edit'
   initialRange?: { start: string; end: string }
   trip?: Trip
+  defaultLocationId?: string
   onClose: () => void
 }) {
   const { addTrip, updateTrip, deleteTrip, trips, holidays } = useAppStore()
@@ -48,11 +49,11 @@ export default function TripDrawer({ open, mode, initialRange, trip, onClose }: 
       setNotes(trip.notes ?? ''); setDiveOverride(trip.estimatedDives)
     } else if (initialRange) {
       setLabel(''); setStart(initialRange.start); setEnd(initialRange.end); setType('fun-dive')
-      setStatus('planned'); setLocationId(undefined); setBookings(seedBookings('fun-dive'))
+      setStatus('planned'); setLocationId(defaultLocationId); setBookings(seedBookings('fun-dive'))
       setNotes(''); setDiveOverride(undefined)
     }
     setError('')
-  }, [open, mode, trip, initialRange])
+  }, [open, mode, trip, initialRange, defaultLocationId])
 
   const holidaySet = useMemo(() => holidaySetFromCache(holidays), [holidays])
   const leaveByYear = start && end ? leaveDaysByYear(start, end, holidaySet) : {}
