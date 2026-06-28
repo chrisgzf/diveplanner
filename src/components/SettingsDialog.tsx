@@ -11,8 +11,8 @@ export default function SettingsDialog() {
 
   return (
     <Dialog>
-      <DialogTrigger className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted hover:text-ink" aria-label="Settings">
-        <SettingsIcon className="h-4 w-4" /> Settings
+      <DialogTrigger className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-muted hover:text-ink md:px-3" aria-label="Settings">
+        <SettingsIcon className="h-4 w-4" /> <span className="hidden md:inline">Settings</span>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader><DialogTitle>Settings</DialogTitle></DialogHeader>

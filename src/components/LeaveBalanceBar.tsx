@@ -26,7 +26,7 @@ function Gauge({ y }: { y: YearLeave }) {
 export default function LeaveBalanceBar() {
   const years = useLeaveByYear()
   return (
-    <div className="border-b border-line bg-surface">
+    <div className="sticky top-14 z-10 border-b border-line bg-surface">
       <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:gap-6">
         <span className="font-display text-xs font-semibold uppercase tracking-wide text-muted">Leave</span>
         {years.map((y) => <Gauge key={y.year} y={y} />)}

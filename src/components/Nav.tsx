@@ -1,35 +1,37 @@
 import { NavLink } from 'react-router-dom'
-import { CalendarDays, MapPin } from 'lucide-react'
+import { CalendarDays, MapPin, Moon, Sun } from 'lucide-react'
 import { cn } from '@/lib/cn'
+import { useAppStore } from '@/store/useAppStore'
+import SettingsDialog from '@/components/SettingsDialog'
+import ShareButton from '@/components/ShareButton'
 
 const links = [
   { to: '/', label: 'Planner', icon: CalendarDays, end: true },
   { to: '/locations', label: 'Locations', icon: MapPin, end: false },
 ]
 
-export default function Nav({ actions }: { actions?: React.ReactNode }) {
+export default function Nav() {
+  const theme = useAppStore((s) => s.settings.theme)
+  const updateSettings = useAppStore((s) => s.updateSettings)
   return (
-    <nav className="sticky top-0 z-20 border-b border-line bg-surface/90 backdrop-blur md:relative">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+    <nav className="sticky top-0 z-20 border-b border-line bg-surface/90 backdrop-blur">
+      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <span className="font-display text-lg font-bold text-primary">DivePlanner</span>
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="flex items-center gap-1">
           {links.map(({ to, label, icon: Icon, end }) => (
             <NavLink key={to} to={to} end={end}
-              className={({ isActive }) => cn('flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted hover:text-ink', isActive && 'bg-line/60 text-ink')}>
-              <Icon className="h-4 w-4" /> {label}
+              className={({ isActive }) => cn('flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-muted hover:text-ink md:px-3', isActive && 'bg-line/60 text-ink')}>
+              <Icon className="h-4 w-4" /> <span className="hidden md:inline">{label}</span>
             </NavLink>
           ))}
-          {actions}
+          <SettingsDialog />
+          <ShareButton />
+          <button type="button" aria-label="Toggle theme"
+            onClick={() => updateSettings({ theme: theme === 'dark' ? 'light' : 'dark' })}
+            className="flex items-center rounded-md px-2.5 py-1.5 text-muted hover:text-ink md:px-3">
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
         </div>
-      </div>
-      {/* mobile bottom tab bar */}
-      <div aria-hidden="true" className="fixed inset-x-0 bottom-0 z-20 flex border-t border-line bg-surface md:hidden">
-        {links.map(({ to, label, icon: Icon, end }) => (
-          <NavLink key={to} to={to} end={end}
-            className={({ isActive }) => cn('flex flex-1 flex-col items-center gap-0.5 py-2 text-xs text-muted', isActive && 'text-primary')}>
-            <Icon className="h-5 w-5" /> {label}
-          </NavLink>
-        ))}
       </div>
     </nav>
   )

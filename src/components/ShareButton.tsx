@@ -16,8 +16,8 @@ export default function ShareButton() {
     }
   }
   return (
-    <button onClick={share} className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted hover:text-ink" aria-label="Share">
-      <Share2 className="h-4 w-4" /> Share
+    <button onClick={share} className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-muted hover:text-ink md:px-3" aria-label="Share">
+      <Share2 className="h-4 w-4" /> <span className="hidden md:inline">Share</span>
     </button>
   )
 }

@@ -2,8 +2,6 @@ import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import Nav from '@/components/Nav'
 import LeaveBalanceBar from '@/components/LeaveBalanceBar'
-import SettingsDialog from '@/components/SettingsDialog'
-import ShareButton from '@/components/ShareButton'
 import { Toaster } from '@/components/ui/sonner'
 import { useHolidays } from '@/hooks/useHolidays'
 import { useAppStore } from '@/store/useAppStore'
@@ -16,7 +14,7 @@ export default function App() {
   }, [theme])
   return (
     <div className="min-h-dvh bg-surface text-ink">
-      <Nav actions={<><SettingsDialog /><ShareButton /></>} />
+      <Nav />
       <LeaveBalanceBar />
       <Outlet />
       <Toaster />
