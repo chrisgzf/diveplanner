@@ -2,6 +2,7 @@ import { getDaysInMonth, getDay } from 'date-fns'
 import DayCell from './DayCell'
 import TripBlock from './TripBlock'
 import type { Trip } from '@/types'
+import type { DayMeta } from '@/lib/dayMeta'
 
 const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
@@ -10,10 +11,11 @@ function iso(year: number, month: number, day: number) {
   return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
 
-export default function MonthGrid({ year, month, trips, holidays, covered, today, selection, readOnly, onDayEnter, onDayClick, onTripClick }: {
+export default function MonthGrid({ year, month, trips, holidays, covered, today, selection, readOnly, onDayEnter, onDayClick, onTripClick, dayMeta }: {
   year: number; month: number; trips: Trip[]; holidays: Set<string>; covered: Map<string, Trip>; today: string
   selection: { start: string | null; end: string | null }; readOnly: boolean
   onDayEnter: (iso: string) => void; onDayClick: (iso: string) => void; onTripClick: (trip: Trip) => void
+  dayMeta: Map<string, DayMeta>
 }) {
   const daysInMonth = getDaysInMonth(new Date(year, month - 1))
   const firstDow = (getDay(new Date(year, month - 1, 1)) + 6) % 7 // Monday-first
@@ -40,7 +42,8 @@ export default function MonthGrid({ year, month, trips, holidays, covered, today
             <DayCell key={d} iso={d} day={day}
               inRange={inRange(d)} isStart={selection.start === d} isEnd={selection.end === d}
               isHoliday={holidays.has(d)} coveredByTrip={covered.get(d)} isToday={today === d} readOnly={readOnly}
-              onMouseEnter={() => onDayEnter(d)} onClick={() => onDayClick(d)} />
+              onMouseEnter={() => onDayEnter(d)} onClick={() => onDayClick(d)}
+              meta={dayMeta.get(d)} />
           )
         })}
       </div>

@@ -1,15 +1,18 @@
 import { useMemo, useState } from 'react'
 import { calendarWindow, formatISO, enumerateDays } from '@/lib/dates'
 import { coveredTripMap } from '@/lib/overlap'
-import { holidaySetFromCache } from '@/lib/holidays'
+import { holidaySetFromCache, holidayNameMap } from '@/lib/holidays'
+import { buildDayMetaMap } from '@/lib/dayMeta'
+import { useMergedLocations } from '@/hooks/useMergedLocations'
 import { useAppStore } from '@/store/useAppStore'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import MonthGrid from './MonthGrid'
-import type { Trip, ISODate } from '@/types'
+import type { Trip, HolidayEntry } from '@/types'
 
 export default function CalendarView({ readOnly = false, trips: tripsProp, holidays: holidaysProp, onRangeSelected, onTripClick }: {
   readOnly?: boolean
   trips?: Trip[]
-  holidays?: Record<string, ISODate[]>
+  holidays?: Record<string, HolidayEntry[]>
   onRangeSelected?: (start: string, end: string) => void
   onTripClick?: (trip: Trip) => void
 }) {
@@ -24,6 +27,12 @@ export default function CalendarView({ readOnly = false, trips: tripsProp, holid
   const today = formatISO(new Date())
   const holidaySet = useMemo(() => holidaySetFromCache(holidays), [holidays])
   const covered = useMemo(() => coveredTripMap(trips), [trips])
+  const locations = useMergedLocations()
+  const names = useMemo(() => holidayNameMap(holidays), [holidays])
+  const dayMeta = useMemo(
+    () => buildDayMetaMap({ window, locations, holidayNames: names, covered }),
+    [window, locations, names, covered],
+  )
 
   // A preview that would cross a covered day is rejected (no overlap allowed).
   const previewValid = (end: string) => {
@@ -49,14 +58,16 @@ export default function CalendarView({ readOnly = false, trips: tripsProp, holid
   const selection = { start: anchor, end: anchor ? hover : null }
 
   return (
-    <div>
-      {window.map(({ year, month }) => (
-        <MonthGrid key={`${year}-${month}`} year={year} month={month}
-          trips={trips} holidays={holidaySet} covered={covered} today={today}
-          selection={selection} readOnly={readOnly}
-          onDayEnter={handleDayEnter} onDayClick={handleDayClick}
-          onTripClick={(t) => onTripClick?.(t)} />
-      ))}
-    </div>
+    <TooltipProvider delayDuration={150}>
+      <div>
+        {window.map(({ year, month }) => (
+          <MonthGrid key={`${year}-${month}`} year={year} month={month}
+            trips={trips} holidays={holidaySet} covered={covered} today={today}
+            selection={selection} readOnly={readOnly}
+            onDayEnter={handleDayEnter} onDayClick={handleDayClick}
+            onTripClick={(t) => onTripClick?.(t)} dayMeta={dayMeta} />
+        ))}
+      </div>
+    </TooltipProvider>
   )
 }
