@@ -1,0 +1,27 @@
+import { Trash2, Plus } from 'lucide-react'
+import type { BookingItem, BookingCategory } from '@/types'
+
+const CATEGORIES: BookingCategory[] = ['dive-shop', 'flight', 'transfer', 'accommodation', 'other']
+
+export default function BookingChecklist({ items, onChange }: { items: BookingItem[]; onChange: (items: BookingItem[]) => void }) {
+  const update = (id: string, patch: Partial<BookingItem>) => onChange(items.map((it) => (it.id === id ? { ...it, ...patch } : it)))
+  const add = () => onChange([...items, { id: crypto.randomUUID(), category: 'other', label: '', booked: false }])
+  const remove = (id: string) => onChange(items.filter((it) => it.id !== id))
+
+  return (
+    <div className="space-y-2">
+      <span className="text-sm font-medium">Booking checklist</span>
+      {items.map((it) => (
+        <div key={it.id} className="flex items-center gap-2">
+          <input type="checkbox" checked={it.booked} onChange={(e) => update(it.id, { booked: e.target.checked })} aria-label={`booked ${it.label || it.category}`} />
+          <select value={it.category} onChange={(e) => update(it.id, { category: e.target.value as BookingCategory })} className="rounded-md border border-line bg-white px-2 py-1 text-sm">
+            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <input value={it.label} onChange={(e) => update(it.id, { label: e.target.value })} placeholder="e.g. Blahblah Divers" className="flex-1 rounded-md border border-line bg-white px-2 py-1 text-sm" />
+          <button type="button" onClick={() => remove(it.id)} aria-label="remove item"><Trash2 className="h-4 w-4 text-muted" /></button>
+        </div>
+      ))}
+      <button type="button" onClick={add} className="flex items-center gap-1 text-sm text-primary"><Plus className="h-4 w-4" /> Add item</button>
+    </div>
+  )
+}
