@@ -12,7 +12,7 @@ export default function TripDrawer({ open, mode, initialRange, trip, defaultLoca
 }) {
   return (
     <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent side="right" className="flex w-full flex-col p-0 sm:max-w-md">
+      <SheetContent side="right" className="flex w-full flex-col overflow-hidden p-0 sm:max-w-md">
         <SheetTitle className="sr-only">{mode === 'edit' ? 'Edit trip' : 'New trip'}</SheetTitle>
         <div className="flex-1 overflow-y-auto p-6">
           {open && (
