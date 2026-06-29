@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-import { SheetHeader, SheetTitle } from '@/components/ui/sheet'
+
 import { Button } from '@/components/ui/button'
 import BookingChecklist from './BookingChecklist'
 import LocationPicker from './LocationPicker'
@@ -101,7 +101,7 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
 
   return (
     <>
-      <SheetHeader><SheetTitle>{mode === 'edit' ? 'Edit trip' : 'New trip'}</SheetTitle></SheetHeader>
+      <div className="mb-2"><h2 className="text-lg font-semibold">{mode === 'edit' ? 'Edit trip' : 'New trip'}</h2></div>
       <div className="space-y-4 py-4">
         <div className="space-y-1">
           <label htmlFor="trip-name" className="text-sm font-medium">Trip name</label>

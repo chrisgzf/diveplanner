@@ -35,7 +35,7 @@ export default function PlannerPage() {
   )
   if (isDesktop) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-6">
+      <main className="mx-auto max-w-screen-2xl px-4 py-6">
         {/* Desktop: inline split. Calendar narrows to ~60% when the panel is open. */}
         <div className="flex gap-6">
           <div className={open ? 'w-3/5' : 'w-full'}>{calendar}</div>
@@ -53,7 +53,7 @@ export default function PlannerPage() {
     )
   }
   return (
-    <main className="mx-auto max-w-5xl px-4 py-6">
+    <main className="mx-auto max-w-screen-2xl px-4 py-6">
       {/* Mobile/tablet: calendar + Sheet overlay. */}
       {calendar}
       <TripDrawer open={open} mode={mode} initialRange={pending ?? undefined}

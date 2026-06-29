@@ -147,20 +147,20 @@
 
 ### UI v2 Task Status (plan: 2026-06-28-ui-v2-implementation.md)
 
-- [ ] Task 1: HolidayEntry type + holiday parsing & name-map migration
-- [ ] Task 2: Substitute holiday logic (`applySubstituteHolidays`)
-- [ ] Task 3: `calendarWindow` replaces `monthsWindow`
-- [ ] Task 4: Covered-trip map + full-colour cells + amber holiday underline
-- [ ] Task 5: Day hover tooltip (`DayMeta` + shadcn Tooltip)
-- [ ] Task 6: Dark-mode tokens & shadcn variable bridge
-- [ ] Task 7: Theme setting, App effect & `bg-white` audit
-- [ ] Task 8: Responsive top nav + sticky leave bar + theme toggle
-- [ ] Task 9: Compact 3-column calendar grid
-- [ ] Task 10: Extract `TripPanel` + inline split panel
-- [ ] Task 11: Trip drawer form field improvements
-- [ ] Task 12: Location "Other" + `customLocation`
-- [ ] Task 13: Seasonality panel in the trip drawer
-- [ ] Task 14: Segmented leave breakdown
+- [x] Task 1: HolidayEntry type + holiday parsing & name-map migration — `cff5784..62c5a1d`
+- [x] Task 2: Substitute holiday logic (`applySubstituteHolidays`) — `62c5a1d..c82ada8`
+- [x] Task 3: `calendarWindow` replaces `monthsWindow` — `c82ada8..799eed2`
+- [x] Task 4: Covered-trip map + full-colour cells + amber holiday underline — `799eed2..1c8d3dd`
+- [x] Task 5: Day hover tooltip (`DayMeta` + shadcn Tooltip) — `1c8d3dd..83400e6`
+- [x] Task 6: Dark-mode tokens & shadcn variable bridge — `83400e6..c7dc9c0`
+- [x] Task 7: Theme setting, App effect & `bg-white` audit — `c7dc9c0..48debde`
+- [x] Task 8: Responsive top nav + sticky leave bar + theme toggle — `48debde..53ccd1c`
+- [x] Task 9: Compact 3-column calendar grid — `53ccd1c..cb8c8da`
+- [x] Task 10: Extract `TripPanel` + inline split panel — `cb8c8da..2b33bb5`
+- [x] Task 11: Trip drawer form field improvements — `2b33bb5..d6ede26`
+- [x] Task 12: Location "Other" + `customLocation` — `d6ede26..75e4015`
+- [x] Task 13: Seasonality panel in the trip drawer — `75e4015..f5550f3`
+- [x] Task 14: Segmented leave breakdown — `f5550f3..457d657`
 
 ### UI v2 change groups (summary)
 1. Layout & nav — sticky header, 3-col compact calendar (currentMonth → Dec currentYear+1), inline split panel, responsive top nav (no bottom tab bar), sun/moon toggle

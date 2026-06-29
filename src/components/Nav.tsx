@@ -15,7 +15,7 @@ export default function Nav() {
   const updateSettings = useAppStore((s) => s.updateSettings)
   return (
     <nav className="sticky top-0 z-20 border-b border-line bg-surface/90 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
+      <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4">
         <span className="font-display text-lg font-bold text-primary">DivePlanner</span>
         <div className="flex items-center gap-1">
           {links.map(({ to, label, icon: Icon, end }) => (
