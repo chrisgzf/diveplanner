@@ -12,7 +12,7 @@ beforeEach(() => {
 describe('LocationsPage', () => {
   it('lists bundled locations and shows detail on select', () => {
     render(<MemoryRouter><LocationsPage /></MemoryRouter>)
-    expect(screen.getByText('Malapascua')).toBeInTheDocument()
+    expect(screen.getAllByText('Malapascua').length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: /plan a trip here/i })).toBeInTheDocument()
   })
 

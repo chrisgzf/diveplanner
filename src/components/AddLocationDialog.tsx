@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { randomUUID } from '@/lib/uuid'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useAppStore } from '@/store/useAppStore'
@@ -17,7 +18,7 @@ export default function AddLocationDialog() {
   const save = () => {
     if (!name.trim()) return
     const loc: Location = {
-      id: `user-${crypto.randomUUID().slice(0, 8)}`, name: name.trim(), country: country.trim() || 'Unknown',
+      id: `user-${randomUUID().slice(0, 8)}`, name: name.trim(), country: country.trim() || 'Unknown',
       difficulty, highlights: [], isUserAdded: true,
       seasonality: ratings.map((rating, i) => ({ month: i + 1, rating })),
     }

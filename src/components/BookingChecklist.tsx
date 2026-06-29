@@ -1,11 +1,12 @@
 import { Trash2, Plus } from 'lucide-react'
+import { randomUUID } from '@/lib/uuid'
 import type { BookingItem, BookingCategory } from '@/types'
 
 const CATEGORIES: BookingCategory[] = ['dive-shop', 'flight', 'transfer', 'accommodation', 'other']
 
 export default function BookingChecklist({ items, onChange }: { items: BookingItem[]; onChange: (items: BookingItem[]) => void }) {
   const update = (id: string, patch: Partial<BookingItem>) => onChange(items.map((it) => (it.id === id ? { ...it, ...patch } : it)))
-  const add = () => onChange([...items, { id: crypto.randomUUID(), category: 'other', label: '', booked: false }])
+  const add = () => onChange([...items, { id: randomUUID(), category: 'other', label: '', booked: false }])
   const remove = (id: string) => onChange(items.filter((it) => it.id !== id))
 
   return (

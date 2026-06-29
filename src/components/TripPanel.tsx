@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
+import { randomUUID } from '@/lib/uuid'
 
 import { Button } from '@/components/ui/button'
 import BookingChecklist from './BookingChecklist'
@@ -20,8 +21,8 @@ const STATUSES: TripStatus[] = ['wishlist', 'planned', 'confirmed']
 function seedBookings(type: TripType): BookingItem[] {
   if (type === 'non-dive') return []
   return [
-    { id: crypto.randomUUID(), category: 'dive-shop', label: '', booked: false },
-    { id: crypto.randomUUID(), category: 'accommodation', label: '', booked: false },
+    { id: randomUUID(), category: 'dive-shop', label: '', booked: false },
+    { id: randomUUID(), category: 'accommodation', label: '', booked: false },
   ]
 }
 
@@ -87,7 +88,7 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
 
   const save = () => {
     if (!start || !end || start > end) { setError('Please enter a valid date range.'); return }
-    const id = mode === 'edit' && trip ? trip.id : crypto.randomUUID()
+    const id = mode === 'edit' && trip ? trip.id : randomUUID()
     if (hasOverlap(trips, start, end, id)) { setError('This range overlaps another trip.'); return }
     const next: Trip = {
       id, label: label.trim() || 'Untitled trip', startDate: start, endDate: end, type, status,
