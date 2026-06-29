@@ -14,7 +14,7 @@ export default function SettingsDialog() {
       <DialogTrigger className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-muted hover:text-ink md:px-3" aria-label="Settings">
         <SettingsIcon className="h-4 w-4" /> <span className="hidden md:inline">Settings</span>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader><DialogTitle>Settings</DialogTitle></DialogHeader>
         <div className="space-y-4">
           <div className="space-y-1">

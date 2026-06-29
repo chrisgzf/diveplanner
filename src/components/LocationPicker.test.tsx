@@ -5,6 +5,24 @@ import LocationPicker from './LocationPicker'
 import { useAppStore } from '@/store/useAppStore'
 import { DEFAULT_SETTINGS } from '@/types'
 
+vi.mock('@/components/ui/select', async () => {
+  const { Children } = await import('react')
+  const SelectTrigger = (_props: any) => null
+  const SelectValue = () => null
+  const SelectContent = ({ children }: any) => <>{children}</>
+  const SelectItem = ({ value, children }: any) => <option value={value}>{children}</option>
+  const Select = ({ value, onValueChange, children }: any) => {
+    const arr = Children.toArray(children)
+    const trigger = arr.find((c: any) => c.type === SelectTrigger) as any
+    return (
+      <select id={trigger?.props?.id} value={value} onChange={(e: any) => onValueChange(e.target.value)}>
+        {arr.filter((c: any) => c.type !== SelectTrigger)}
+      </select>
+    )
+  }
+  return { Select, SelectTrigger, SelectValue, SelectContent, SelectItem }
+})
+
 beforeEach(() => {
   useAppStore.setState({ trips: [], siteOverrides: [], settings: DEFAULT_SETTINGS, holidays: {} })
 })
