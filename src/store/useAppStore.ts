@@ -52,6 +52,14 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: 'diveplanner',
+      version: 1,
+      migrate: (persisted: unknown, version: number) => {
+        const state = persisted as AppStore
+        if (version === 0) {
+          state.settings = { ...DEFAULT_SETTINGS, ...state.settings, theme: 'dark' }
+        }
+        return state
+      },
       partialize: (s) => ({ settings: s.settings, trips: s.trips, siteOverrides: s.siteOverrides }),
     },
   ),
