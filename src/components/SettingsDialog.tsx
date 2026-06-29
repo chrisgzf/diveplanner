@@ -18,6 +18,14 @@ export default function SettingsDialog() {
         <DialogHeader><DialogTitle>Settings</DialogTitle></DialogHeader>
         <div className="space-y-4">
           <div className="space-y-1">
+            <label htmlFor="theme" className="text-sm font-medium">Theme</label>
+            <select id="theme" value={settings.theme} onChange={(e) => updateSettings({ theme: e.target.value as 'dark' | 'light' | 'system' })} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="system">System</option>
+            </select>
+          </div>
+          <div className="space-y-1">
             <label htmlFor="country" className="text-sm font-medium">Country (for public holidays)</label>
             <select id="country" value={settings.country} onChange={(e) => updateSettings({ country: e.target.value })} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm">
               {SUPPORTED_COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}

@@ -50,7 +50,7 @@ export interface Location {
 export interface Settings {
   country: string // ISO 3166-1 alpha-2
   leaveBudget: Record<number, number> // days available per calendar year (includes any carryover)
-  theme: 'dark' | 'light'
+  theme: 'dark' | 'light' | 'system'
 }
 
 const _year = new Date().getFullYear()
