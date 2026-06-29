@@ -138,12 +138,7 @@
 
 ## UI v2 — Next Steps
 
-### Status: Plan complete → Ready to execute (SDD)
-
-- **Spec:** `docs/superpowers/specs/2026-06-28-ui-v2-design.md` (committed `b2164d5`)
-- **Plan:** `docs/superpowers/plans/2026-06-28-ui-v2-implementation.md` — 14 SDD tasks, full TDD steps + code.
-- **Next action:** Resume the SDD workflow (`superpowers:subagent-driven-development`) at UI v2 Task 1. **Load the `shadcn` skill first** (mandatory for UI work — see Global Constraints). Add the tooltip component in Task 5 via `bunx --bun shadcn@latest add tooltip`.
-- **As each task completes:** add a task entry below with its commit + review outcome.
+### Status: ALL 14 TASKS COMPLETE + post-launch bugfixes applied
 
 ### UI v2 Task Status (plan: 2026-06-28-ui-v2-implementation.md)
 
@@ -169,19 +164,39 @@
 4. Trip drawer — TripPanel extract, form fixes (placeholders, status default, location Other + `customLocation`), seasonality panel, segmented leave breakdown
 5. Leave & holidays — `applySubstituteHolidays` with chaining, `calendarWindow` replaces `monthsWindow`, `HolidayEntry` type upgrade
 
+## Post-UI v2 Bugfixes (all committed to main, pushed)
+
+| Commit | Fix |
+|--------|-----|
+| `4eb06e5` | Gate desktop/mobile with `useIsDesktop()` JS hook — Sheet portal escape from `lg:hidden` |
+| `6f378e7` | Add `'system'` theme option with `prefers-color-scheme` resolution in App.tsx |
+| `c3d7fd2` | Zustand persist `version:1` + `migrate` — backfills `theme:'dark'` for returning users |
+| `902c56e` | Fix migration tests to call real `migrate` via `persist.rehydrate()`; narrow type cast |
+| `d3907f1` | Tooltip: `bg-popover`/`text-popover-foreground` + `pointer-events-none` (contrast + capture); `TripPanel` replace `SheetHeader`/`SheetTitle` with plain `<h2>` (fixes `DialogTitle` crash on desktop inline render); `max-w-5xl` → `max-w-screen-2xl` everywhere; leave bar `text-xs` → `text-sm` |
+| `06738a4` | Mobile UX: `LocationPicker` → shadcn `Select` (no OS full-screen picker); `TripDrawer` flex-col shell with scrollable inner div; `SettingsDialog` `onOpenAutoFocus` prevent (theme select auto-activating) |
+| `f860c42` | `LocationsPage` mobile master-detail (show list OR detail, not stacked); `crypto.randomUUID` polyfill via `src/lib/uuid.ts` for HTTP non-secure contexts |
+| `07c0d95` | Sheet variants: remove `h-full` from right/left, rely on `inset-y-0` (top:0;bottom:0) for iOS Safari |
+| `b9497ee` | `TripDrawer` SheetContent: add `h-[100svh]` for explicit iOS Safari viewport cap |
+
+### Outstanding Issue (in progress)
+- **`TripDrawer` still scrollable on iPhone** — sheet panel extends beyond viewport on mobile Safari. `h-[100svh]` + `overflow-hidden` + `flex-1 overflow-y-auto` inner div pushed but not yet confirmed fixed. Chrome browser debugging was in progress (matchMedia patched for mobile emulation) when context ran low.
+- **Next debugging step:** Use Chrome DevTools device emulation (Ctrl+Shift+M) on `http://localhost:5173`, click two dates to open the Sheet, inspect the `[data-state=open]` SheetContent element's computed `height`, `overflow`, and whether the inner `flex-1` div is constrained. Check if `100svh` resolves correctly.
+
 ## Current git HEAD
 
 ```
-b2164d5 docs: add UI v2 design spec (layout, dark mode, calendar, drawer, leave)
-b8d0fa0 fix: clear stale holidays on country change, add date validation to trip save
-079248b feat: wire holiday fetching and finalize integration
-7daab04 test: add CalendarView store-isolation test for SharePage
-9a3584d feat: add share button and read-only share view
-c53777c feat: add settings dialog
-8b14f61 feat: add locations explorer with custom locations and export
+b9497ee fix: h-[100svh] on Sheet panel for iOS Safari viewport constraint
+07c0d95 fix: sheet panel height on iOS Safari — drop h-full, rely on inset-y-0
+f860c42 fix: locations master-detail on mobile, crypto.randomUUID polyfill for HTTP
+06738a4 fix: mobile UX — Radix location picker, sheet scroll, settings autofocus
+d3907f1 fix: tooltip contrast/capture, DialogTitle crash, wider layout, larger leave bar text
+902c56e test(store): exercise real migrate via persist.rehydrate(); narrow migrate type cast
+c3d7fd2 fix: add persist version/migrate to backfill theme:dark for returning users
+6f378e7 feat: add 'system' theme option with prefers-color-scheme resolution
+4eb06e5 fix: gate desktop/mobile rendering with JS to prevent Sheet portal leak on desktop
+457d657 feat: segmented leave breakdown in the trip drawer
 ```
 
-## Test Suite State (as of Task 18 + final fixes complete)
+## Test Suite State
 
-`bun run test` → 57/57 passing across 19 test files (all tasks complete)
-- src/lib/leave.test.ts (6)
+`bun run test` → 83/83 passing across 23 test files
