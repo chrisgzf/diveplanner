@@ -226,21 +226,44 @@ The text-size bump above surfaced real layout regressions on an actual iPhone (1
 - **Sheet border removed** (`src/components/ui/sheet.tsx`) — was only ever visible on one edge by design (`border-l`/`border-r` on the side facing the overlay); user found it looked like a glitch and preferred no border. `shadow-lg` still separates the sheet from the page.
 - **Settings leave-days input fixed** (`SettingsDialog.tsx`) — was a controlled `<input type="number">` bound straight to the numeric store value, so it couldn't pass through an empty state while editing (backspacing "25" re-snapped to "0", forcing an awkward "25→210→10" workaround). Added local per-year draft string state; store commits only on valid parse, clears on blur.
 
+**Note:** all "uncommitted" sections above (split-pane layout, light-mode colour bug, shared-link theme bug, settings leave-days input, per-day leave exclusion, booking checklist categories, post-font-bump mobile fixes, typography pass, Sunday-first calendar, `vite.config.js` shadow bug, sheet border) landed in `1a6aae9` — "fix: mobile/iOS UX pass, split-pane layout, leave exclusion, typography bump".
+
+## Session: 2026-07-02 — shadcn cleanup + dialog/select fixes (committed)
+
+- `d70639f` — fix: theme-aware selects, searchable country picker, rounded dialog on mobile
+  - `DialogContent` (`src/components/ui/dialog.tsx`): rounds on all breakpoints (was `sm:` and up only), border replaced with an all-sides black shadow (`shadow-[0_0_40px_rgba(0,0,0,0.5)]`), matching the border-removal already applied to `Sheet`.
+  - `LocationsPage.tsx` country/level filters: native `<select>` → shadcn `Select` (native selects only follow OS `color-scheme`, not the app's manual dark/light toggle — they stayed dark after switching to light mode).
+  - `SettingsDialog.tsx` country field: replaced the 6-country hardcoded `<select>` with a searchable Popover+Command combobox over the full ISO 3166-1 country list (`src/data/countries.ts`, names via `Intl.DisplayNames`). SEA dive countries (Singapore, Malaysia, Philippines, Indonesia, Thailand) pinned at the top, Singapore first; everything else alphabetical. Fixes "can't add Latvia" and case-insensitive substring search.
+- `f61c7ad` — refactor: migrate remaining native form elements to shadcn components
+  - Audit (via subagent) found more raw `<select>`/`<input type=checkbox>`/`<input>`/`<textarea>` across `BookingChecklist`, `LeaveBreakdown`, `AddLocationDialog`, `SettingsDialog`, `TripPanel`, `LocationPicker`. All migrated to shadcn `Select`/`Checkbox`/`Input`/`Textarea`.
+  - `LeaveBreakdown`'s indeterminate-checkbox logic simplified from a manual `ref` + `useEffect` hack to Radix's native `checked="indeterminate"` state.
+  - Verified in-browser in both light and dark mode; visual classes (`border-line`/`bg-surface-elevated`) preserved via `className` overrides — no visual change, component-form only.
+- `f276386` — docs: add design spec for calendar click-through, nav logo, notes contrast, share trip detail (spec written, not yet implemented — see below).
+
+### Next up (approved spec, not yet implemented)
+
+Spec: `docs/superpowers/specs/2026-07-02-calendar-nav-share-fixes-design.md`
+
+1. Click-through on covered day cells in the calendar (`MonthGrid`/`DayCell`) — clicking a trip's highlighted dates should open the trip, same as clicking the bar below the month already does.
+2. "DivePlanner" nav logo isn't a link — wrap in `<Link to="/">`.
+3. `LocationsPage.tsx`'s `currentNote` box has a hardcoded `bg-white` the earlier dark-mode audit missed — blinding in dark mode. Swap to `bg-surface-elevated`.
+4. New read-only `TripDetailDialog` for shared links — `TripBlock`'s `disabled={readOnly}` is dropped (it never mutates state itself), and clicking a trip on `/share/:hash` opens a read-only dialog (name, dates, location, type/status, booking checklist, notes — no leave/holiday breakdown). Location names must resolve against the *shared plan's* `siteOverrides` via `mergeLocations()`, not the viewer's local store (`useMergedLocations()` would show blank/wrong names for a shared custom location). Confirmed (no code change needed): viewing a share link never mutates the local store — only the explicit "Make this mine" → "Overwrite" button does.
+
 ## Current git HEAD
 
 ```
+f276386 docs: add design spec for calendar click-through, nav logo, notes contrast, share trip detail
+f61c7ad refactor: migrate remaining native form elements to shadcn components
+d70639f fix: theme-aware selects, searchable country picker, rounded dialog on mobile
+1a6aae9 fix: mobile/iOS UX pass, split-pane layout, leave exclusion, typography bump
+cab3f41 chore: update TRACKER.md — UI v2 complete, post-launch fixes logged
 b9497ee fix: h-[100svh] on Sheet panel for iOS Safari viewport constraint
 07c0d95 fix: sheet panel height on iOS Safari — drop h-full, rely on inset-y-0
 f860c42 fix: locations master-detail on mobile, crypto.randomUUID polyfill for HTTP
 06738a4 fix: mobile UX — Radix location picker, sheet scroll, settings autofocus
 d3907f1 fix: tooltip contrast/capture, DialogTitle crash, wider layout, larger leave bar text
-902c56e test(store): exercise real migrate via persist.rehydrate(); narrow migrate type cast
-c3d7fd2 fix: add persist version/migrate to backfill theme:dark for returning users
-6f378e7 feat: add 'system' theme option with prefers-color-scheme resolution
-4eb06e5 fix: gate desktop/mobile rendering with JS to prevent Sheet portal leak on desktop
-457d657 feat: segmented leave breakdown in the trip drawer
 ```
 
 ## Test Suite State
 
-`bun run test` → 83/83 passing across 23 test files
+`bun run test` → 86/86 passing across 23 test files
