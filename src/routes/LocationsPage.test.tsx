@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import LocationsPage from './LocationsPage'
 import { useAppStore } from '@/store/useAppStore'
@@ -19,5 +20,15 @@ describe('LocationsPage', () => {
   it('hides Export my overrides when there are none', () => {
     render(<MemoryRouter><LocationsPage /></MemoryRouter>)
     expect(screen.queryByRole('button', { name: /export my overrides/i })).not.toBeInTheDocument()
+  })
+
+  it('renders the current-conditions note without a hardcoded white background', async () => {
+    render(<MemoryRouter><LocationsPage /></MemoryRouter>)
+    const malapascuaButton = screen.getAllByText('Malapascua')[0]
+    await userEvent.click(malapascuaButton)
+    const notes = screen.getAllByText(/typhoon risk/i)
+    const note = notes[0]
+    expect(note.className).toContain('bg-surface-elevated')
+    expect(note.className).not.toContain('bg-white')
   })
 })

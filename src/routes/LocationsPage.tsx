@@ -88,7 +88,7 @@ export default function LocationsPage() {
         <div><h3 className="text-base font-semibold">Highlights</h3><p>{selected.highlights.join(', ')}</p></div>
       )}
       <div><h3 className="mb-2 text-base font-semibold">Seasonality</h3><SeasonalityGrid seasonality={selected.seasonality} /></div>
-      {selected.currentNote && <p className="rounded-md border border-line bg-white p-3 text-base text-muted">{selected.currentNote}</p>}
+      {selected.currentNote && <p className="rounded-md border border-line bg-surface-elevated p-3 text-base text-muted">{selected.currentNote}</p>}
       <Button onClick={() => navigate(`/?location=${selected.id}`)}>Plan a trip here →</Button>
     </section>
   ) : null
