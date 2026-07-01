@@ -54,7 +54,7 @@ export default function MonthGrid({ year, month, trips, holidays, covered, today
       </div>
       {monthTrips.length > 0 && (
         <div className="mt-2 space-y-1">
-          {monthTrips.map((t) => <TripBlock key={t.id} trip={t} readOnly={readOnly} onClick={() => onTripClick(t)} />)}
+          {monthTrips.map((t) => <TripBlock key={t.id} trip={t} onClick={() => onTripClick(t)} />)}
         </div>
       )}
     </section>

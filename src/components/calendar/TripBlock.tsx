@@ -7,13 +7,12 @@ export const typeColor: Record<Trip['type'], string> = {
   'fun-dive': 'bg-fun-dive', course: 'bg-course', liveaboard: 'bg-liveaboard', 'non-dive': 'bg-non-dive',
 }
 
-export default function TripBlock({ trip, onClick, readOnly }: { trip: Trip; onClick?: () => void; readOnly?: boolean }) {
+export default function TripBlock({ trip, onClick }: { trip: Trip; onClick?: () => void }) {
   const locations = useMergedLocations()
   const place = trip.locationId ? locations.find((l) => l.id === trip.locationId)?.name : trip.customLocation
   return (
     <button
       type="button"
-      disabled={readOnly}
       onClick={onClick}
       className={cn(
         'flex w-full items-center gap-1.5 truncate rounded-md px-2 py-1 text-left text-sm font-medium text-white',

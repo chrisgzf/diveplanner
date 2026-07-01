@@ -67,4 +67,12 @@ describe('CalendarView', () => {
     await userEvent.click(screen.getByRole('button', { name: `day ${trip.startDate}` }))
     expect(onTripClick).toHaveBeenCalledWith(trip)
   })
+
+  it('trip block click fires onTripClick even when the calendar is read-only', async () => {
+    useAppStore.setState({ trips: [trip] })
+    const onTripClick = vi.fn()
+    render(<CalendarView readOnly onTripClick={onTripClick} />)
+    await userEvent.click(screen.getByRole('button', { name: /test trip/i }))
+    expect(onTripClick).toHaveBeenCalledWith(trip)
+  })
 })
