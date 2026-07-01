@@ -25,6 +25,27 @@ vi.mock('@/components/TripPanel', () => ({
   },
 }))
 
+// Mock TripsOverview so mobile tab tests can select a trip without real store/location data
+vi.mock('@/components/TripsOverview', () => ({
+  default: ({ onSelect }: { onSelect: (t: unknown) => void }) => (
+    <button
+      onClick={() =>
+        onSelect({
+          id: 'trip-1',
+          label: 'Test Trip',
+          startDate: '2026-07-01',
+          endDate: '2026-07-02',
+          type: 'fun-dive',
+          status: 'planned',
+          bookings: [],
+        })
+      }
+    >
+      Select Trip From Overview
+    </button>
+  ),
+}))
+
 function makeMatchMedia(matches: boolean) {
   return (query: string) => ({
     matches: query === '(min-width: 1024px)' ? matches : false,
@@ -110,5 +131,34 @@ describe('PlannerPage desktop/mobile gating', () => {
 
     // Mobile: Sheet dialog should be present
     expect(screen.getByRole('dialog')).toBeInTheDocument()
+  })
+
+  it('mobile: defaults to Planner tab, switches to Trips tab, and selecting a trip opens the drawer without changing the active tab', async () => {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: makeMatchMedia(false),
+    })
+
+    render(
+      <MemoryRouter>
+        <PlannerPage />
+      </MemoryRouter>,
+    )
+
+    // Defaults to Planner: calendar's mocked button is visible, Trips tab content is not mounted
+    expect(screen.getByRole('button', { name: 'Select Range' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Select Trip From Overview' })).not.toBeInTheDocument()
+
+    // Switch to Trips tab
+    await userEvent.click(screen.getByRole('tab', { name: 'Trips' }))
+    expect(screen.getByRole('tab', { name: 'Trips' })).toHaveAttribute('data-state', 'active')
+    expect(screen.getByRole('button', { name: 'Select Trip From Overview' })).toBeInTheDocument()
+
+    // Selecting a trip from the Trips tab opens the drawer; tab stays on Trips.
+    // The Sheet's Radix Dialog marks the rest of the page aria-hidden while open,
+    // so this query needs `hidden: true` to still find the (visually present) tab.
+    await userEvent.click(screen.getByRole('button', { name: 'Select Trip From Overview' }))
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Trips', hidden: true })).toHaveAttribute('data-state', 'active')
   })
 })
