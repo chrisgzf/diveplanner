@@ -42,7 +42,12 @@ export default function MonthGrid({ year, month, trips, holidays, covered, today
             <DayCell key={d} iso={d} day={day}
               inRange={inRange(d)} isStart={selection.start === d} isEnd={selection.end === d}
               isHoliday={holidays.has(d)} coveredByTrip={covered.get(d)} isToday={today === d} readOnly={readOnly}
-              onMouseEnter={() => onDayEnter(d)} onClick={() => onDayClick(d)}
+              onMouseEnter={() => onDayEnter(d)}
+              onClick={() => {
+                const trip = covered.get(d)
+                if (trip) onTripClick(trip)
+                else onDayClick(d)
+              }}
               meta={dayMeta.get(d)} />
           )
         })}

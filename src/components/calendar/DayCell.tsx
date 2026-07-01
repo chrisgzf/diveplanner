@@ -31,7 +31,7 @@ export default function DayCell({ iso, day, inRange, isStart, isEnd, isHoliday, 
     <button
       type="button"
       aria-label={`day ${iso}`}
-      disabled={readOnly || isCovered}
+      disabled={readOnly && !isCovered}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
       className={cn(
