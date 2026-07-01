@@ -240,30 +240,46 @@ The text-size bump above surfaced real layout regressions on an actual iPhone (1
   - Verified in-browser in both light and dark mode; visual classes (`border-line`/`bg-surface-elevated`) preserved via `className` overrides — no visual change, component-form only.
 - `f276386` — docs: add design spec for calendar click-through, nav logo, notes contrast, share trip detail (spec written, not yet implemented — see below).
 
-### Next up (approved spec, not yet implemented)
+## Session: 2026-07-02 (cont'd) — calendar/nav/share fixes plan (SDD, all 6 tasks committed)
 
-Spec: `docs/superpowers/specs/2026-07-02-calendar-nav-share-fixes-design.md`
+Plan: `docs/superpowers/plans/2026-07-02-calendar-nav-share-fixes.md`. Executed via `superpowers:subagent-driven-development` — fresh implementer + reviewer subagent per task, then a final whole-branch review. Ledger: `.superpowers/sdd/progress.md`.
 
-1. Click-through on covered day cells in the calendar (`MonthGrid`/`DayCell`) — clicking a trip's highlighted dates should open the trip, same as clicking the bar below the month already does.
-2. "DivePlanner" nav logo isn't a link — wrap in `<Link to="/">`.
-3. `LocationsPage.tsx`'s `currentNote` box has a hardcoded `bg-white` the earlier dark-mode audit missed — blinding in dark mode. Swap to `bg-surface-elevated`.
-4. New read-only `TripDetailDialog` for shared links — `TripBlock`'s `disabled={readOnly}` is dropped (it never mutates state itself), and clicking a trip on `/share/:hash` opens a read-only dialog (name, dates, location, type/status, booking checklist, notes — no leave/holiday breakdown). Location names must resolve against the *shared plan's* `siteOverrides` via `mergeLocations()`, not the viewer's local store (`useMergedLocations()` would show blank/wrong names for a shared custom location). Confirmed (no code change needed): viewing a share link never mutates the local store — only the explicit "Make this mine" → "Overwrite" button does.
+- Task 1 `6f7f42c` — fix: clicking a trip's date cells in the calendar opens the trip (`DayCell`/`MonthGrid`). Review clean.
+- `726d401` — fix: add vertical gap between stacked `DialogFooter` buttons on mobile (ad hoc bug report mid-session, not part of the plan — the "Make this mine" Overwrite/Cancel buttons had 0 margin when stacked on mobile).
+- Task 2 `1e36bae` — fix: link the DivePlanner nav logo to the planner page. Review clean (necessary deviation: narrowed an existing test's `/planner/i` regex to exact `'Planner'` match, since it became ambiguous once "DivePlanner" was also a link).
+- Task 3 `67e559a` — fix: hardcoded `bg-white` on location note box → `bg-surface-elevated`. Review clean.
+- Task 4 `ccf170e` — fix: trip blocks stay clickable on read-only calendars (`TripBlock`'s `readOnly` disable removed — it never mutated state, so disabling only blocked the click). Review clean.
+- Task 5 `6028b7d` — feat: add read-only `TripDetailDialog` component (dates, location, type/status, booking checklist, notes; no leave/holiday breakdown — needs live per-country holiday data not in the share payload). Review clean (minor, plan-mandated: no `DialogDescription`, addressed below).
+- Task 6 `14372aa` — feat: wire `TripDetailDialog` into `SharePage` — clicking a trip on `/share/:hash` opens the dialog, location names resolved via `mergeLocations(shared.siteOverrides)` (the *shared plan's* overrides, not the viewer's local store). Review clean.
+- Final whole-branch review (opus): **Ready to merge: Yes**, 0 Critical/Important issues. 3 minor recommendations — 2 applied in follow-up commit `06a91cd` (cursor-pointer on now-clickable covered day cells; `sr-only` `DialogDescription` on `TripDetailDialog` to silence Radix's a11y warning). Left as-is: `isoInFirstMonth()` test helper duplicated across `CalendarView.test.tsx`/`SharePage.test.tsx` — reviewer's own call not worth the churn.
+- Pushed to `origin/main` through `ccf170e` (mid-session); remaining commits pending push.
+
+## Session: 2026-07-02 (cont'd) — planner page UI polish spec (design approved, not yet planned)
+
+Four more UI polish items from user feedback, brainstormed and written up as a design spec:
+
+1. Desktop calendar range-selection opens the "New trip" panel with no dismiss control (`TripPanel` embedded inline has zero close chrome — mobile's `TripDrawer` Sheet already handles X/click-outside/Escape correctly). Fix: `showClose` prop on `TripPanel` adds an X button + Escape handling, passed from `PlannerPage`'s desktop aside only.
+2. Mobile has no access to the "Planned trips" view at all (desktop-only today). Fix: shadcn `Tabs` ("Planner" / "Trips") below the sticky leave bar on mobile, swapping the calendar for `TripsOverview` + new stats strip.
+3. Desktop trip rows show only date + location. Fix: append dive count and leave-days-used as plain text on the existing subtitle line (`lg:`-only), reusing `lib/dives.ts`/`lib/leave.ts` helpers already used by `TripPanel`.
+4. No aggregated stats. Fix: new `TripStats` component (shadcn `Card`, needs `bunx --bun shadcn@latest add card`) above `TripsOverview` on both desktop and mobile's Trips tab — order: trips planned → dives planned → days until next trip → dives done (only if > 0).
+
+**Spec:** `docs/superpowers/specs/2026-07-02-planner-ui-polish-design.md` — approved by user. **Next step: write the implementation plan** (`superpowers:writing-plans`), then execute via SDD as usual.
 
 ## Current git HEAD
 
 ```
-f276386 docs: add design spec for calendar click-through, nav logo, notes contrast, share trip detail
-f61c7ad refactor: migrate remaining native form elements to shadcn components
-d70639f fix: theme-aware selects, searchable country picker, rounded dialog on mobile
-1a6aae9 fix: mobile/iOS UX pass, split-pane layout, leave exclusion, typography bump
-cab3f41 chore: update TRACKER.md — UI v2 complete, post-launch fixes logged
-b9497ee fix: h-[100svh] on Sheet panel for iOS Safari viewport constraint
-07c0d95 fix: sheet panel height on iOS Safari — drop h-full, rely on inset-y-0
-f860c42 fix: locations master-detail on mobile, crypto.randomUUID polyfill for HTTP
-06738a4 fix: mobile UX — Radix location picker, sheet scroll, settings autofocus
-d3907f1 fix: tooltip contrast/capture, DialogTitle crash, wider layout, larger leave bar text
+84d0b6e docs: add design spec for planner page UI polish
+06a91cd fix: cursor affordance on clickable calendar cells, dialog a11y description
+14372aa feat: read-only trip detail dialog on shared links
+6028b7d feat: add read-only TripDetailDialog component
+ccf170e fix: trip blocks stay clickable on read-only calendars
+726d401 fix: add vertical gap between stacked DialogFooter buttons on mobile
+67e559a fix: hardcoded bg-white on location note box unreadable in dark mode
+1e36bae fix: link the DivePlanner nav logo to the planner page
+6f7f42c fix: clicking a trip's date cells in the calendar opens the trip
+ac9369c docs: add implementation plan for calendar/nav/share fixes
 ```
 
 ## Test Suite State
 
-`bun run test` → 86/86 passing across 23 test files
+`bun run test` → 96/96 passing across 24 test files
