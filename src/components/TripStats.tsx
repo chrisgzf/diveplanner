@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
-import { Card, CardContent } from '@/components/ui/card'
 import { formatISO } from '@/lib/dates'
 import { estimatedDives } from '@/lib/dives'
 import type { Trip } from '@/types'
@@ -33,14 +32,12 @@ export default function TripStats({ trips }: { trips: Trip[] }) {
   if (stats.divesDone > 0) cards.push({ label: 'Dives done', value: stats.divesDone })
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+    <div className="flex divide-x divide-line rounded-md border border-line">
       {cards.map((c) => (
-        <Card key={c.label}>
-          <CardContent className="p-3 text-center">
-            <div className="text-2xl font-semibold">{c.value}</div>
-            <div className="text-sm text-muted">{c.label}</div>
-          </CardContent>
-        </Card>
+        <div key={c.label} className="flex-1 basis-0 px-2 py-3 text-center">
+          <div className="text-2xl font-semibold">{c.value}</div>
+          <div className="text-sm text-muted">{c.label}</div>
+        </div>
       ))}
     </div>
   )
