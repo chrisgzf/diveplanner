@@ -37,7 +37,7 @@ export default function DayCell({ iso, day, inRange, isStart, isEnd, isHoliday, 
       className={cn(
         'relative aspect-square text-base transition-colors disabled:cursor-default',
         rounding,
-        isCovered ? fill[coveredByTrip.type] : 'rounded-md hover:bg-line/60',
+        isCovered ? cn(fill[coveredByTrip.type], 'cursor-pointer') : 'rounded-md hover:bg-line/60',
         inRange && !isCovered && 'bg-primary/15',
         (isStart || isEnd) && 'bg-primary text-white hover:bg-primary',
         isToday && !isStart && !isEnd && 'ring-1 ring-inset ring-primary',

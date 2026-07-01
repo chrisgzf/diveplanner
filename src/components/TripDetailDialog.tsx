@@ -1,6 +1,6 @@
 import { format, parseISO } from 'date-fns'
 import { Check } from 'lucide-react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { cn } from '@/lib/cn'
 import { formatWeekday } from '@/lib/dates'
 import { typeColor } from '@/components/calendar/TripBlock'
@@ -21,7 +21,10 @@ export default function TripDetailDialog({ trip, locations, onClose }: {
   return (
     <Dialog open onOpenChange={(open) => { if (!open) onClose() }}>
       <DialogContent>
-        <DialogHeader><DialogTitle>{trip.label}</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>{trip.label}</DialogTitle>
+          <DialogDescription className="sr-only">{fullDate(trip.startDate)} – {fullDate(trip.endDate)}</DialogDescription>
+        </DialogHeader>
         <div className="space-y-3 text-base">
           <div>
             <div>{fullDate(trip.startDate)}</div>
