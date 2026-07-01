@@ -79,7 +79,7 @@ A small stats block rendered above `TripsOverview` in both the desktop `<aside>`
 
 `today` = `formatISO(new Date())` (existing helper, matches `CalendarView.tsx`'s usage).
 
-Props: `{ trips: Trip[]; holidays: Record<string, HolidayEntry[]> }` — takes data as props (not read from the store internally) so both call sites (which already have this data on hand) can pass it directly, and so the component itself stays presentational/testable in isolation.
+Props: `{ trips: Trip[] }` — takes data as a prop (not read from the store internally) so both call sites (which already have `trips` on hand) can pass it directly, and so the component itself stays presentational/testable in isolation. (Deviation from initial design: `holidays` was dropped — none of the four stats below use holiday data, and this repo's `noUnusedParameters` strict-mode setting turns an accepted-but-unread prop into a build error.)
 
 ---
 
