@@ -292,9 +292,21 @@ Baseline confirmed before plan execution: `bun run test` → 96/96 passing, 24 t
 
 All verified via `bun run test` (110/110), `tsc --noEmit`, `bun run build`, and live in-browser testing (Chrome via `claude-in-chrome`) for every visual change, including `getComputedStyle` color checks in both light and dark mode for the Tabs contrast fixes.
 
+## Session: 2026-07-02 (cont'd) — iOS viewport-gap fix + Copy Summary feature
+
+Two more items from live user feedback, handled directly (no plan/spec — user asked to skip that ceremony for the second one):
+
+- `b5bf51a` — fix: `TripDrawer`'s mobile Sheet left a gap at the bottom on iOS Safari. Root cause: `h-[100svh]` (added in `b9497ee`, an earlier session) is a fixed size based on the *smallest* possible viewport (address bar fully expanded); once Safari's toolbar auto-collapses (e.g. after scrolling inside the sheet), the actual visible viewport grows past `100svh`, leaving a gap below the top-anchored sheet. Switched to `h-dvh` (`100dvh`), the unit designed to track the live visible viewport as Safari's chrome shows/hides. Confirmed `.h-dvh{height:100dvh}` in the build output; **not yet confirmed on a real device** (this environment only has Chrome, which doesn't reproduce iOS Safari's dynamic-toolbar behavior) — ask the user to verify next time they're on an iPhone.
+- `b43da2c` — feat: "Copy Summary" button next to "Planned trips" in `TripsOverview` (shown in both the desktop aside and mobile Trips tab). Copies a numbered, plain-text summary of all currently-displayed trips to the clipboard — date range, status in parens, location, dive count, leave days used — for pasting into chat/email. Brainstormed briefly (2 clarifying questions: include all trip statuses not just planned/booked — yes; feedback via toast not button-text-swap — yes, plus user asked to also suffix trip status in parens), then user explicitly said to skip the design-doc/plan step and implement directly. Reuses the exact dive/leave computation the visible rows already use (factored into `tripSummaryParts` to avoid a third duplicate — the final whole-branch review had already flagged this logic as duplicated across `TripsOverview`/`TripStats`/`TripPanel`) and mirrors `ShareButton.tsx`'s existing clipboard-copy + `sonner` toast pattern. 3 new tests assert the exact clipboard string byte-for-byte (single trip, multi-trip ordering, all three omission rules).
+
+Both verified via `bun run test` (114/114), `tsc --noEmit`, `bun run build`, and live in-browser (Chrome) — including reading `dist/assets/*.css` directly to confirm the `h-dvh` utility was actually emitted, since the iOS-specific behavior itself can't be reproduced in Chrome.
+
 ## Current git HEAD
 
 ```
+b43da2c feat: add Copy Summary button to the planned trips list
+b5bf51a fix: TripDrawer sheet doesn't fill the full viewport height on iOS Safari
+d18d2e0 chore: update TRACKER.md — planner UI polish plan complete + 5 follow-up fixes
 dece7d0 fix: Escape no longer closes the whole trip panel when a nested popover is open
 0f9f966 fix: warmer copy for the empty planned-trips state
 c29d5fb fix: increase dark-mode contrast between active and inactive Tabs
@@ -302,11 +314,8 @@ c29d5fb fix: increase dark-mode contrast between active and inactive Tabs
 c64fb7e fix: TripStats uses an even-split divider row instead of bordered cards
 084ecc9 feat: add mobile Planner/Trips tabs and wire TripStats into both views
 6cbfad4 feat: add aggregated TripStats component
-a6eb51a feat: show dive count and leave days on desktop trip rows
-a01f89c feat: add dismissible close button + Escape handling to desktop trip panel
-934cc35 chore: update TRACKER.md — planner UI polish spec approved, next step is planning
 ```
 
 ## Test Suite State
 
-`bun run test` → 110/110 passing across 27 test files
+`bun run test` → 114/114 passing across 27 test files
