@@ -5,7 +5,12 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "strict": true
+    "strict": true,
+    // Composite projects must emit, but nothing imports this output — keep it
+    // out of the project root so it can't shadow vite.config.ts for Vite's
+    // own config loader (which prefers a same-directory .js over .ts).
+    "outDir": "./node_modules/.tmp/tsconfig.node",
+    "declarationDir": "./node_modules/.tmp/tsconfig.node"
   },
   "include": ["vite.config.ts"]
 }

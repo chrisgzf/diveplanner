@@ -4,7 +4,7 @@ import TripBlock from './TripBlock'
 import type { Trip } from '@/types'
 import type { DayMeta } from '@/lib/dayMeta'
 
-const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
 
 function iso(year: number, month: number, day: number) {
@@ -18,7 +18,7 @@ export default function MonthGrid({ year, month, trips, holidays, covered, today
   dayMeta: Map<string, DayMeta>
 }) {
   const daysInMonth = getDaysInMonth(new Date(year, month - 1))
-  const firstDow = (getDay(new Date(year, month - 1, 1)) + 6) % 7 // Monday-first
+  const firstDow = getDay(new Date(year, month - 1, 1)) // Sunday-first (date-fns getDay: 0 = Sunday)
   const monthTrips = trips.filter((t) => t.startDate <= iso(year, month, daysInMonth) && t.endDate >= iso(year, month, 1))
 
   const inRange = (d: string) => {
@@ -31,8 +31,8 @@ export default function MonthGrid({ year, month, trips, holidays, covered, today
 
   return (
     <section className="mb-2">
-      <h2 className="mb-1.5 font-display text-sm font-semibold">{MONTH_NAMES[month - 1]} {year}</h2>
-      <div className="grid grid-cols-7 gap-0.5 text-center text-[0.7rem] text-muted">
+      <h2 className="mb-1.5 font-display text-base font-semibold">{MONTH_NAMES[month - 1]} {year}</h2>
+      <div className="grid grid-cols-7 gap-0.5 text-center text-xs text-muted">
         {WEEKDAYS.map((w) => <div key={w} className="pb-1">{w}</div>)}
         {Array.from({ length: firstDow }, (_, i) => <div key={`pad-${i}`} />)}
         {Array.from({ length: daysInMonth }, (_, i) => {

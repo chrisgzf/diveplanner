@@ -39,18 +39,18 @@ export default function LocationsPage() {
   const listPanel = (
     <aside className="space-y-3">
       <div className="flex gap-2">
-        <select value={country} onChange={(e) => setCountry(e.target.value)} className="flex-1 rounded-md border border-line px-2 py-1 text-sm" aria-label="filter country">
+        <select value={country} onChange={(e) => setCountry(e.target.value)} className="flex-1 rounded-md border border-line px-2 py-1 text-base" aria-label="filter country">
           <option value="">All countries</option>
           {countries.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
-        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="flex-1 rounded-md border border-line px-2 py-1 text-sm" aria-label="filter difficulty">
+        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="flex-1 rounded-md border border-line px-2 py-1 text-base" aria-label="filter difficulty">
           <option value="">All levels</option><option value="beginner">beginner</option><option value="intermediate">intermediate</option><option value="advanced">advanced</option>
         </select>
       </div>
       <ul className="divide-y divide-line rounded-md border border-line">
         {filtered.map((l) => (
           <li key={l.id}>
-            <button onClick={() => handleSelect(l.id)} className={`w-full px-3 py-2 text-left text-sm ${selected?.id === l.id ? 'bg-line/50 font-medium' : ''}`}>
+            <button onClick={() => handleSelect(l.id)} className={`w-full px-3 py-2 text-left text-base ${selected?.id === l.id ? 'bg-line/50 font-medium' : ''}`}>
               {l.name} <span className="text-muted">· {l.country}</span>
             </button>
           </li>
@@ -63,18 +63,18 @@ export default function LocationsPage() {
 
   const detailPanel = selected ? (
     <section className="space-y-4">
-      <button onClick={() => setMobilePanel('list')} className="flex items-center gap-1 text-sm text-muted hover:text-ink md:hidden">
+      <button onClick={() => setMobilePanel('list')} className="flex items-center gap-1 text-base text-muted hover:text-ink md:hidden">
         <ChevronLeft className="h-4 w-4" /> All locations
       </button>
       <div>
-        <h1 className="font-display text-2xl font-bold">{selected.name}</h1>
+        <h1 className="font-display text-3xl font-bold">{selected.name}</h1>
         <p className="text-muted">{selected.country} · {selected.difficulty}</p>
       </div>
       {selected.highlights.length > 0 && (
-        <div><h3 className="text-sm font-semibold">Highlights</h3><p>{selected.highlights.join(', ')}</p></div>
+        <div><h3 className="text-base font-semibold">Highlights</h3><p>{selected.highlights.join(', ')}</p></div>
       )}
-      <div><h3 className="mb-2 text-sm font-semibold">Seasonality</h3><SeasonalityGrid seasonality={selected.seasonality} /></div>
-      {selected.currentNote && <p className="rounded-md border border-line bg-white p-3 text-sm text-muted">{selected.currentNote}</p>}
+      <div><h3 className="mb-2 text-base font-semibold">Seasonality</h3><SeasonalityGrid seasonality={selected.seasonality} /></div>
+      {selected.currentNote && <p className="rounded-md border border-line bg-white p-3 text-base text-muted">{selected.currentNote}</p>}
       <Button onClick={() => navigate(`/?location=${selected.id}`)}>Plan a trip here →</Button>
     </section>
   ) : null

@@ -4,21 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Colour tokens are stored as "R G B" triples (not hex) so Tailwind's
+ * `rgb(var(--x) / <alpha-value>)` pattern in tailwind.config.ts can apply
+ * opacity modifiers (e.g. bg-primary/80). Hex values here previously made
+ * every `/NN` opacity utility on these colours silently produce no CSS
+ * (transparent backgrounds).
+ */
 :root {
-  --surface: #F2F7F8;
-  --surface-elevated: #FFFFFF;
-  --ink: #0B1F2A;
-  --muted: #5B7682;
-  --line: #D7E3E6;
-  --primary: #0E7C86;
-  --good: #0E9F6E;
-  --fair: #D9A406;
-  --poor: #E05A3B;
-  --closed: #8595A0;
-  --fun-dive: #2563EB;
-  --course: #0E9F6E;
-  --liveaboard: #7C3AED;
-  --non-dive: #8595A0;
+  --surface: 242 247 248; /* #F2F7F8 */
+  --surface-elevated: 255 255 255; /* #FFFFFF */
+  --ink: 11 31 42; /* #0B1F2A */
+  --muted: 91 118 130; /* #5B7682 */
+  --line: 215 227 230; /* #D7E3E6 */
+  --primary: 14 124 134; /* #0E7C86 */
+  --good: 14 159 110; /* #0E9F6E */
+  --fair: 217 164 6; /* #D9A406 */
+  --poor: 224 90 59; /* #E05A3B */
+  --closed: 133 149 160; /* #8595A0 */
+  --fun-dive: 37 99 235; /* #2563EB */
+  --course: 14 159 110; /* #0E9F6E */
+  --liveaboard: 124 58 237; /* #7C3AED */
+  --non-dive: 133 149 160; /* #8595A0 */
 
   /* Shadcn variable bridge → our semantic tokens. */
   --background: var(--surface);
@@ -27,7 +34,7 @@
   --card-foreground: var(--ink);
   --popover: var(--surface-elevated);
   --popover-foreground: var(--ink);
-  --primary-foreground: #FFFFFF;
+  --primary-foreground: 255 255 255; /* #FFFFFF */
   --border: var(--line);
   --input: var(--line);
   --ring: var(--primary);
@@ -35,13 +42,13 @@
 }
 
 .dark {
-  --surface: #0D1E27;
-  --surface-elevated: #122B38;
-  --ink: #E8F4F6;
-  --muted: #7BA3AE;
-  --line: #1E3545;
-  --primary: #14A8B5;
-  --fair: #F5C030;
+  --surface: 13 30 39; /* #0D1E27 */
+  --surface-elevated: 18 43 56; /* #122B38 */
+  --ink: 232 244 246; /* #E8F4F6 */
+  --muted: 123 163 174; /* #7BA3AE */
+  --line: 30 53 69; /* #1E3545 */
+  --primary: 20 168 181; /* #14A8B5 */
+  --fair: 245 192 48; /* #F5C030 */
   /* --good, --poor, --closed, and trip-type colours are readable on both backgrounds. */
 }
 
@@ -55,4 +62,35 @@
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/*
+ * iOS Safari auto-zooms the page on focus if a form field's computed
+ * font-size is under 16px. Our fields use text-sm (14px) for a compact
+ * desktop layout, so force 16px on the small screens where this matters
+ * instead of shrinking the desktop UI.
+ */
+@media (max-width: 639px) {
+  /* !important needed: Tailwind's text-sm/text-xs utility classes outrank a
+     plain element selector on specificity regardless of source order. */
+  input, select, textarea { font-size: 16px !important; }
+}
+
+/*
+ * iOS Safari draws input[type=date]/time/datetime-local with its own native
+ * chrome, which is sized from the widget's internal content rather than the
+ * CSS box — width/box-sizing/max-width on the *element* don't constrain that
+ * native rendering, so it can protrude past its container even though every
+ * other field (which has no native chrome) obeys width:100% fine. Removing
+ * the native appearance is what actually makes Safari lay it out like an
+ * ordinary text box; tapping still opens the native date picker.
+ */
+input[type="date"], input[type="time"], input[type="datetime-local"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }

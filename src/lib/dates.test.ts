@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { enumerateDays, isWeekday, durationDays, calendarWindow, formatISO, monthsInRange } from './dates'
+import { enumerateDays, isWeekday, durationDays, calendarWindow, formatISO, monthsInRange, formatShortDate } from './dates'
 
 describe('dates', () => {
   it('enumerateDays returns inclusive list', () => {
@@ -39,4 +39,14 @@ describe('dates', () => {
 it('monthsInRange returns the unique months a range spans', () => {
   expect(monthsInRange('2026-04-29', '2026-05-02')).toEqual([4, 5])
   expect(monthsInRange('2026-05-10', '2026-05-12')).toEqual([5])
+})
+
+describe('formatShortDate', () => {
+  it('formats as weekday + short numeric date, day/month order following the runtime locale', () => {
+    // 2026-07-20 is a Monday.
+    const result = formatShortDate('2026-07-20')
+    expect(result).toMatch(/^Mon \d{1,2}\/\d{1,2}$/)
+    const numeric = result.split(' ')[1].split('/').map(Number)
+    expect(numeric.sort((a, b) => a - b)).toEqual([7, 20])
+  })
 })

@@ -16,11 +16,11 @@ export default function Nav() {
   return (
     <nav className="sticky top-0 z-20 border-b border-line bg-surface/90 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4">
-        <span className="font-display text-lg font-bold text-primary">DivePlanner</span>
+        <span className="font-display text-xl font-bold text-primary">DivePlanner</span>
         <div className="flex items-center gap-1">
           {links.map(({ to, label, icon: Icon, end }) => (
             <NavLink key={to} to={to} end={end}
-              className={({ isActive }) => cn('flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-muted hover:text-ink md:px-3', isActive && 'bg-line/60 text-ink')}>
+              className={({ isActive }) => cn('flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-base font-medium text-muted hover:text-ink md:px-3', isActive && 'bg-line/60 text-ink')}>
               <Icon className="h-4 w-4" /> <span className="hidden md:inline">{label}</span>
             </NavLink>
           ))}

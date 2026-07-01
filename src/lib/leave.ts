@@ -34,17 +34,17 @@ export function segmentDays(start: ISODate, end: ISODate, holidayNames: Map<ISOD
   return out
 }
 
-function leaveDays(start: ISODate, end: ISODate, holidays: Set<ISODate>): ISODate[] {
-  return enumerateDays(start, end).filter((d) => isWeekday(d) && !holidays.has(d))
+function leaveDays(start: ISODate, end: ISODate, holidays: Set<ISODate>, excluded: Set<ISODate> = new Set()): ISODate[] {
+  return enumerateDays(start, end).filter((d) => isWeekday(d) && !holidays.has(d) && !excluded.has(d))
 }
 
-export function leaveDaysInRange(start: ISODate, end: ISODate, holidays: Set<ISODate>): number {
-  return leaveDays(start, end, holidays).length
+export function leaveDaysInRange(start: ISODate, end: ISODate, holidays: Set<ISODate>, excluded?: Set<ISODate>): number {
+  return leaveDays(start, end, holidays, excluded).length
 }
 
-export function leaveDaysByYear(start: ISODate, end: ISODate, holidays: Set<ISODate>): Record<number, number> {
+export function leaveDaysByYear(start: ISODate, end: ISODate, holidays: Set<ISODate>, excluded?: Set<ISODate>): Record<number, number> {
   const out: Record<number, number> = {}
-  for (const d of leaveDays(start, end, holidays)) {
+  for (const d of leaveDays(start, end, holidays, excluded)) {
     const year = Number(d.slice(0, 4))
     out[year] = (out[year] ?? 0) + 1
   }
@@ -54,7 +54,8 @@ export function leaveDaysByYear(start: ISODate, end: ISODate, holidays: Set<ISOD
 export function leaveUsedByYear(trips: Trip[], holidays: Set<ISODate>): Record<number, number> {
   const out: Record<number, number> = {}
   for (const trip of trips) {
-    const byYear = leaveDaysByYear(trip.startDate, trip.endDate, holidays)
+    const excluded = trip.excludedLeaveDates ? new Set(trip.excludedLeaveDates) : undefined
+    const byYear = leaveDaysByYear(trip.startDate, trip.endDate, holidays, excluded)
     for (const [year, n] of Object.entries(byYear)) {
       out[Number(year)] = (out[Number(year)] ?? 0) + n
     }

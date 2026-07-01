@@ -21,6 +21,10 @@ describe('leaveDaysInRange', () => {
     // 2026-05-22 is a Friday; single-day trip = 1 leave day
     expect(leaveDaysInRange('2026-05-22', '2026-05-22', noHols)).toBe(1)
   })
+  it('subtracts explicitly excluded weekdays (e.g. a travel day not taken as leave)', () => {
+    const excluded = new Set(['2026-05-15']) // Friday
+    expect(leaveDaysInRange('2026-05-15', '2026-05-23', noHols, excluded)).toBe(5)
+  })
 })
 
 describe('leaveDaysByYear', () => {
@@ -58,5 +62,13 @@ describe('leaveUsedByYear', () => {
     ]
     const used = leaveUsedByYear(trips, noHols)
     expect(used[2026]).toBe(6 + 5) // trip a: 6 weekdays (Fri 15 + Mon-Fri 18-22); trip b: Mon-Fri = 5
+  })
+
+  it('excludes a trip\'s excludedLeaveDates from the tally (e.g. a fly-out-after-work day)', () => {
+    const trips: Trip[] = [
+      { id: 'a', label: 'Dive', startDate: '2026-05-15', endDate: '2026-05-23', type: 'fun-dive', status: 'planned', bookings: [], excludedLeaveDates: ['2026-05-15'] },
+    ]
+    const used = leaveUsedByYear(trips, noHols)
+    expect(used[2026]).toBe(5) // Fri 15 excluded; Mon-Fri 18-22 still counted
   })
 })

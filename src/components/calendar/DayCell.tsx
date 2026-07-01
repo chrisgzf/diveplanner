@@ -35,7 +35,7 @@ export default function DayCell({ iso, day, inRange, isStart, isEnd, isHoliday, 
       onMouseEnter={onMouseEnter}
       onClick={onClick}
       className={cn(
-        'relative aspect-square text-sm transition-colors disabled:cursor-default',
+        'relative aspect-square text-base transition-colors disabled:cursor-default',
         rounding,
         isCovered ? fill[coveredByTrip.type] : 'rounded-md hover:bg-line/60',
         inRange && !isCovered && 'bg-primary/15',
@@ -50,7 +50,7 @@ export default function DayCell({ iso, day, inRange, isStart, isEnd, isHoliday, 
   return (
     <Tooltip>
       <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent className="max-w-xs space-y-1 text-xs">
+      <TooltipContent className="max-w-xs space-y-1 text-sm">
         {meta!.goodLocs.length > 0 && (
           <div><div className="font-semibold text-good">Good for diving</div><div className="text-muted-foreground">· {meta!.goodLocs.join(' · ')}</div></div>
         )}

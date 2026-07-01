@@ -23,13 +23,13 @@ export default function LocationPicker({ value, customValue, onChange }: {
 
   return (
     <div className="space-y-1">
-      <label htmlFor="location" className="text-sm font-medium">Location</label>
+      <label htmlFor="location" className="text-base font-medium">Location</label>
       <Select value={selectValue} onValueChange={(v) => {
         if (v === OTHER) { setIsOther(true); setLocalCustom(''); onChange(undefined, '') }
         else if (v === NONE) { setIsOther(false); onChange(undefined, undefined) }
         else { setIsOther(false); setLocalCustom(''); onChange(v, undefined) }
       }}>
-        <SelectTrigger id="location" className="w-full text-sm">
+        <SelectTrigger id="location" className="w-full text-base">
           <SelectValue placeholder="— none —" />
         </SelectTrigger>
         <SelectContent>
@@ -41,7 +41,7 @@ export default function LocationPicker({ value, customValue, onChange }: {
       {isOther && (
         <input aria-label="custom location" value={localCustom} placeholder="Custom location name"
           onChange={(e) => { setLocalCustom(e.target.value); onChange(undefined, e.target.value) }}
-          className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-sm" />
+          className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" />
       )}
     </div>
   )

@@ -12,11 +12,11 @@ function Gauge({ y }: { y: YearLeave }) {
   const t = tone(y.remaining)
   return (
     <div className="flex min-w-0 flex-1 items-center gap-3">
-      <span className="font-mono text-sm text-muted">{y.year}</span>
+      <span className="font-mono text-base text-muted">{y.year}</span>
       <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-line">
         <div className={cn('h-full rounded-full transition-[width]', t.bar)} style={{ width: `${pct}%` }} />
       </div>
-      <span className={cn('whitespace-nowrap font-mono text-sm font-medium', t.text)}>
+      <span className={cn('whitespace-nowrap font-mono text-base font-medium', t.text)}>
         {y.remaining} left <span className="text-muted">/ {y.total}</span>
       </span>
     </div>
@@ -28,7 +28,7 @@ export default function LeaveBalanceBar() {
   return (
     <div className="sticky top-14 z-10 border-b border-line bg-surface">
       <div className="mx-auto flex max-w-screen-2xl flex-col gap-2 px-4 py-2.5 sm:flex-row sm:items-center sm:gap-6">
-        <span className="font-display text-sm font-semibold uppercase tracking-wide text-muted">Leave</span>
+        <span className="font-display text-base font-semibold uppercase tracking-wide text-muted">Leave</span>
         {years.map((y) => <Gauge key={y.year} y={y} />)}
       </div>
     </div>

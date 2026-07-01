@@ -8,7 +8,7 @@ export type TripStatus = 'wishlist' | 'planned' | 'confirmed'
 export type TripType = 'fun-dive' | 'course' | 'liveaboard' | 'non-dive'
 export type MonthRating = 'good' | 'fair' | 'poor' | 'closed'
 
-export type BookingCategory = 'dive-shop' | 'flight' | 'transfer' | 'accommodation' | 'other'
+export type BookingCategory = 'dive-shop' | 'flight' | 'transfer' | 'accommodation' | 'insurance' | 'equipment' | 'other'
 
 export interface BookingItem {
   id: string
@@ -29,6 +29,7 @@ export interface Trip {
   bookings: BookingItem[]
   notes?: string
   estimatedDives?: number
+  excludedLeaveDates?: ISODate[] // weekdays within the trip range not actually taken as leave (e.g. a travel day)
 }
 
 export interface LocationMonthRating {
