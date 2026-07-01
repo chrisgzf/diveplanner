@@ -263,23 +263,50 @@ Four more UI polish items from user feedback, brainstormed and written up as a d
 3. Desktop trip rows show only date + location. Fix: append dive count and leave-days-used as plain text on the existing subtitle line (`lg:`-only), reusing `lib/dives.ts`/`lib/leave.ts` helpers already used by `TripPanel`.
 4. No aggregated stats. Fix: new `TripStats` component (shadcn `Card`, needs `bunx --bun shadcn@latest add card`) above `TripsOverview` on both desktop and mobile's Trips tab — order: trips planned → dives planned → days until next trip → dives done (only if > 0).
 
-**Spec:** `docs/superpowers/specs/2026-07-02-planner-ui-polish-design.md` — approved by user. **Next step: write the implementation plan** (`superpowers:writing-plans`), then execute via SDD as usual.
+**Spec:** `docs/superpowers/specs/2026-07-02-planner-ui-polish-design.md` — approved by user.
+
+**Plan:** `docs/superpowers/plans/2026-07-02-planner-ui-polish-implementation.md` — written via `superpowers:writing-plans` (2026-07-02). 4 tasks, in dependency order:
+1. Dismissible desktop trip panel (`TripPanel` gains `showClose` prop — X button + Escape)
+2. Richer desktop trip rows (`TripsOverview` subtitle gains dive count + leave days, `lg:` only)
+3. Aggregated stats strip — new `TripStats` component (needs `bunx --bun shadcn@latest add card`, not yet installed)
+4. Wire `TripStats` into both call sites + add mobile Planner/Trips `Tabs` to `PlannerPage`
+
+**Known plan deviation (already baked into the plan, not yet applied to code):** spec's `TripStats` props include `holidays`, but none of the 4 stats need it and this repo's `noUnusedParameters: true` would error on an unused prop — plan drops `holidays`, keeping just `{ trips: Trip[] }`, and updates the design spec doc in Task 3's commit.
+
+Baseline confirmed before plan execution: `bun run test` → 96/96 passing, 24 test files (matches tracker). Plan's cumulative expected counts: 101 (after Task 1) → 104 (Task 2) → 109 (Task 3) → 110 (Task 4).
+
+**Executed via `superpowers:subagent-driven-development`** (2026-07-02) — fresh implementer + reviewer subagent per task, then a final whole-branch review. Ledger: `.superpowers/sdd/progress.md`.
+
+- Task 1 `a01f89c` — feat: dismissible close button + Escape handling on desktop trip panel. Review clean.
+- Task 2 `a6eb51a` — feat: dive count + leave days on desktop trip rows (`lg:` only). Review clean.
+- Task 3 `6cbfad4` — feat: add `TripStats` component + shadcn `Card`. Review clean.
+- Task 4 `084ecc9` — feat: wire `TripStats` into both call sites, add mobile Planner/Trips `Tabs`. Review clean (one accepted deviation: `PlannerPage.test.tsx`'s final assertion needed `{ hidden: true }` on a `getByRole('tab', ...)` query, since Radix's modal `Dialog` sets `aria-hidden` on the rest of the page while the trip-editing Sheet is open — confirmed real Radix behavior via `node_modules` inspection, not a masked defect).
+- Final whole-branch review (opus): **Ready to merge: Yes**, 0 Critical/Important. 2 Minor: (a) dive-count-resolution logic duplicated across `TripsOverview`/`TripStats`/`TripPanel` — left as-is, cosmetic; (b) `TripPanel`'s Escape handler could close the whole panel through a nested-open Select — confirmed as a real, reproducible bug via in-browser testing (open "New trip" → open Trip type select → Escape closed both at once) and fixed in `dece7d0` (skip the window-level handler when `e.defaultPrevented`, since Radix's `DismissableLayer` calls `preventDefault()` on its own capture-phase Escape handling).
+
+**Five follow-up fixes from live user feedback on the rendered UI** (not part of the original plan, applied directly — same pattern as prior sessions' ad hoc fixes):
+- `c64fb7e` — `TripStats` reworked from a shadcn-`Card` grid (left an empty gap below 4 stats, boxy borders) to a single flex row with `divide-x` separators that always fills the width and splits evenly.
+- `540dd55` — mobile Planner/Trips `Tabs` had **invisible inactive-tab text** in both themes: root cause was this repo's `--muted-foreground: var(--muted)` bridge in `index.css` (deliberate everywhere else, so hand-written `text-muted` and shadcn's `text-muted-foreground` read the same) colliding with the stock Tabs primitive's `bg-muted`+`text-muted-foreground` pairing on the same element — the two colors were provably identical (confirmed via `getComputedStyle`). Reworked to the app's own `Nav.tsx`-style palette; also fixed clipped trigger text (`h-9` was 4px too short for the `py-1.5`/`text-base` content once padding was accounted for).
+- `c29d5fb` — dark-mode active/inactive tab contrast was still too low after the above (`bg-line/60` track and `bg-surface-elevated` active pill are deliberately close tones in this app's dark palette). Switched the track to a transparent `border-line` outline so the active pill contrasts against the page background instead, matching how every other elevated-panel-on-page pairing in the app already reads.
+- `0f9f966` — reworded the empty "Planned trips" state copy (was stale placeholder text predating the dedicated Planner/Trips views).
+- `dece7d0` — the Escape-propagation fix described above.
+
+All verified via `bun run test` (110/110), `tsc --noEmit`, `bun run build`, and live in-browser testing (Chrome via `claude-in-chrome`) for every visual change, including `getComputedStyle` color checks in both light and dark mode for the Tabs contrast fixes.
 
 ## Current git HEAD
 
 ```
-84d0b6e docs: add design spec for planner page UI polish
-06a91cd fix: cursor affordance on clickable calendar cells, dialog a11y description
-14372aa feat: read-only trip detail dialog on shared links
-6028b7d feat: add read-only TripDetailDialog component
-ccf170e fix: trip blocks stay clickable on read-only calendars
-726d401 fix: add vertical gap between stacked DialogFooter buttons on mobile
-67e559a fix: hardcoded bg-white on location note box unreadable in dark mode
-1e36bae fix: link the DivePlanner nav logo to the planner page
-6f7f42c fix: clicking a trip's date cells in the calendar opens the trip
-ac9369c docs: add implementation plan for calendar/nav/share fixes
+dece7d0 fix: Escape no longer closes the whole trip panel when a nested popover is open
+0f9f966 fix: warmer copy for the empty planned-trips state
+c29d5fb fix: increase dark-mode contrast between active and inactive Tabs
+540dd55 fix: mobile Planner/Trips tabs had invisible inactive-tab text and clipped triggers
+c64fb7e fix: TripStats uses an even-split divider row instead of bordered cards
+084ecc9 feat: add mobile Planner/Trips tabs and wire TripStats into both views
+6cbfad4 feat: add aggregated TripStats component
+a6eb51a feat: show dive count and leave days on desktop trip rows
+a01f89c feat: add dismissible close button + Escape handling to desktop trip panel
+934cc35 chore: update TRACKER.md — planner UI polish spec approved, next step is planning
 ```
 
 ## Test Suite State
 
-`bun run test` → 96/96 passing across 24 test files
+`bun run test` → 110/110 passing across 27 test files
