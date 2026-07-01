@@ -19,7 +19,7 @@ export default function TripsOverview({ onSelect }: { onSelect: (trip: Trip) => 
   if (sorted.length === 0) {
     return (
       <p className="py-8 text-center text-base text-muted">
-        Select a date range on the calendar, or click an existing trip, to see details here.
+        No trips planned yet — select a date range on the calendar to start stacking some leave for quality time off!
       </p>
     )
   }
