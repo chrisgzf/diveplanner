@@ -66,7 +66,7 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
 
   useEffect(() => {
     if (!showClose) return
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape' && !e.defaultPrevented) onClose() }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [showClose, onClose])
