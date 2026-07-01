@@ -5,6 +5,7 @@ import { useAppStore } from '@/store/useAppStore'
 import SeasonalityGrid from '@/components/SeasonalityGrid'
 import AddLocationDialog from '@/components/AddLocationDialog'
 import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ChevronLeft } from 'lucide-react'
 
 export default function LocationsPage() {
@@ -39,13 +40,26 @@ export default function LocationsPage() {
   const listPanel = (
     <aside className="space-y-3">
       <div className="flex gap-2">
-        <select value={country} onChange={(e) => setCountry(e.target.value)} className="flex-1 rounded-md border border-line px-2 py-1 text-base" aria-label="filter country">
-          <option value="">All countries</option>
-          {countries.map((c) => <option key={c} value={c}>{c}</option>)}
-        </select>
-        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="flex-1 rounded-md border border-line px-2 py-1 text-base" aria-label="filter difficulty">
-          <option value="">All levels</option><option value="beginner">beginner</option><option value="intermediate">intermediate</option><option value="advanced">advanced</option>
-        </select>
+        <Select value={country || 'all'} onValueChange={(v) => setCountry(v === 'all' ? '' : v)}>
+          <SelectTrigger className="flex-1" aria-label="filter country">
+            <SelectValue placeholder="All countries" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All countries</SelectItem>
+            {countries.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={difficulty || 'all'} onValueChange={(v) => setDifficulty(v === 'all' ? '' : v)}>
+          <SelectTrigger className="flex-1" aria-label="filter difficulty">
+            <SelectValue placeholder="All levels" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All levels</SelectItem>
+            <SelectItem value="beginner">beginner</SelectItem>
+            <SelectItem value="intermediate">intermediate</SelectItem>
+            <SelectItem value="advanced">advanced</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <ul className="divide-y divide-line rounded-md border border-line">
         {filtered.map((l) => (

@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Settings as SettingsIcon } from 'lucide-react'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Button } from '@/components/ui/button'
+import { Settings as SettingsIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { SUPPORTED_COUNTRIES } from '@/data/countries'
 import { calendarWindow } from '@/lib/dates'
+import { cn } from '@/lib/cn'
 
 export default function SettingsDialog() {
   const settings = useAppStore((s) => s.settings)
@@ -12,6 +16,8 @@ export default function SettingsDialog() {
   // Raw in-progress text per year, so the field can go through an empty
   // state while editing instead of snapping back to "0" on every keystroke.
   const [leaveDrafts, setLeaveDrafts] = useState<Record<number, string>>({})
+  const [countryOpen, setCountryOpen] = useState(false)
+  const selectedCountry = SUPPORTED_COUNTRIES.find((c) => c.code === settings.country)
 
   return (
     <Dialog>
@@ -31,9 +37,31 @@ export default function SettingsDialog() {
           </div>
           <div className="space-y-1">
             <label htmlFor="country" className="text-base font-medium">Country (for public holidays)</label>
-            <select id="country" value={settings.country} onChange={(e) => updateSettings({ country: e.target.value })} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base">
-              {SUPPORTED_COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
-            </select>
+            <Popover open={countryOpen} onOpenChange={setCountryOpen}>
+              <PopoverTrigger asChild>
+                <Button id="country" variant="outline" role="combobox" aria-expanded={countryOpen}
+                  className="w-full justify-between border-line bg-surface-elevated font-normal">
+                  {selectedCountry?.name ?? 'Select country…'}
+                  <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                <Command>
+                  <CommandInput placeholder="Search countries…" />
+                  <CommandList>
+                    <CommandEmpty>No country found.</CommandEmpty>
+                    <CommandGroup>
+                      {SUPPORTED_COUNTRIES.map((c) => (
+                        <CommandItem key={c.code} value={c.name} onSelect={() => { updateSettings({ country: c.code }); setCountryOpen(false) }}>
+                          <Check className={cn('mr-2 h-4 w-4', settings.country === c.code ? 'opacity-100' : 'opacity-0')} />
+                          {c.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
           {years.map((year) => (
             <div key={year} className="space-y-1">
