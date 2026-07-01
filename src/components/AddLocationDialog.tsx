@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { randomUUID } from '@/lib/uuid'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAppStore } from '@/store/useAppStore'
 import type { Location, MonthRating } from '@/types'
 
@@ -32,18 +34,28 @@ export default function AddLocationDialog() {
       <DialogContent>
         <DialogHeader><DialogTitle>Add a location</DialogTitle></DialogHeader>
         <div className="space-y-3">
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" aria-label="location name" className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" />
-          <input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Country" aria-label="country" className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" />
-          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Location['difficulty'])} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base">
-            <option value="beginner">beginner</option><option value="intermediate">intermediate</option><option value="advanced">advanced</option>
-          </select>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" aria-label="location name" className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base" />
+          <Input value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Country" aria-label="country" className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base" />
+          <Select value={difficulty} onValueChange={(v) => setDifficulty(v as Location['difficulty'])}>
+            <SelectTrigger className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="beginner">beginner</SelectItem>
+              <SelectItem value="intermediate">intermediate</SelectItem>
+              <SelectItem value="advanced">advanced</SelectItem>
+            </SelectContent>
+          </Select>
           <div className="grid grid-cols-6 gap-2">
             {ratings.map((r, i) => (
-              <select key={i} aria-label={`month ${i + 1} rating`} value={r}
-                onChange={(e) => setRatings((prev) => prev.map((x, j) => (j === i ? (e.target.value as MonthRating) : x)))}
-                className="rounded border border-line bg-surface-elevated px-1 py-1 text-sm">
-                {RATINGS.map((x) => <option key={x} value={x}>{x}</option>)}
-              </select>
+              <Select key={i} value={r} onValueChange={(v) => setRatings((prev) => prev.map((x, j) => (j === i ? (v as MonthRating) : x)))}>
+                <SelectTrigger aria-label={`month ${i + 1} rating`} className="h-auto rounded border-line bg-surface-elevated px-1 py-1 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {RATINGS.map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}
+                </SelectContent>
+              </Select>
             ))}
           </div>
           <Button onClick={save} className="w-full">Save location</Button>

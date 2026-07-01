@@ -2,6 +2,9 @@ import { useMemo, useState, useEffect } from 'react'
 import { randomUUID } from '@/lib/uuid'
 
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import BookingChecklist from './BookingChecklist'
 import LocationPicker from './LocationPicker'
 import LeaveBreakdown from './LeaveBreakdown'
@@ -110,19 +113,19 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
       <div className="space-y-4 py-4">
         <div className="space-y-1">
           <label htmlFor="trip-name" className="text-base font-medium">Trip name</label>
-          <input id="trip-name" value={label} onChange={(e) => setLabel(e.target.value)}
-            className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" placeholder="e.g. Malapascua May 2026" />
+          <Input id="trip-name" value={label} onChange={(e) => setLabel(e.target.value)}
+            className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base" placeholder="e.g. Malapascua May 2026" />
         </div>
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div className="min-w-0 space-y-1">
             <label htmlFor="start" className="text-base font-medium">Start (inclusive)</label>
-            <input id="start" type="date" value={start} onChange={(e) => setStart(e.target.value)} className="w-full min-w-0 rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" />
+            <Input id="start" type="date" value={start} onChange={(e) => setStart(e.target.value)} className="w-full min-w-0 rounded-md border-line bg-surface-elevated px-2 py-2 text-base" />
             {start && <p className="text-sm text-muted">{formatWeekday(start)}</p>}
           </div>
           <div className="min-w-0 space-y-1">
             <label htmlFor="end" className="text-base font-medium">End (inclusive)</label>
-            <input id="end" type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="w-full min-w-0 rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" />
+            <Input id="end" type="date" value={end} onChange={(e) => setEnd(e.target.value)} className="w-full min-w-0 rounded-md border-line bg-surface-elevated px-2 py-2 text-base" />
             {end && <p className="text-sm text-muted">{formatWeekday(end)}</p>}
           </div>
         </div>
@@ -145,15 +148,25 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
             <label htmlFor="type" className="text-base font-medium">Trip type</label>
-            <select id="type" value={type} onChange={(e) => onTypeChange(e.target.value as TripType)} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base">
-              {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
+            <Select value={type} onValueChange={(v) => onTypeChange(v as TripType)}>
+              <SelectTrigger id="type" className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1">
             <label htmlFor="status" className="text-base font-medium">Status</label>
-            <select id="status" value={status} onChange={(e) => setStatus(e.target.value as TripStatus)} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base">
-              {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-            </select>
+            <Select value={status} onValueChange={(v) => setStatus(v as TripStatus)}>
+              <SelectTrigger id="status" className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -167,7 +180,7 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
 
         <div className="space-y-1">
           <label htmlFor="notes" className="text-base font-medium">Notes</label>
-          <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" />
+          <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base" />
         </div>
 
         <div className="rounded-md border border-line bg-surface-elevated p-3 font-mono text-sm">
@@ -180,9 +193,9 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
           )}
           <div className="mt-1 flex items-center gap-2">
             <span>Dives:</span>
-            <input type="number" min={0} value={diveOverride ?? autoDives}
+            <Input type="number" min={0} value={diveOverride ?? autoDives}
               onChange={(e) => setDiveOverride(e.target.value === '' ? undefined : Number(e.target.value))}
-              className="w-16 rounded border border-line px-1 py-0.5" aria-label="estimated dives" />
+              className="w-16 rounded border-line px-1 py-0.5" aria-label="estimated dives" />
           </div>
         </div>
 

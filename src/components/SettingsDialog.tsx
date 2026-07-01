@@ -3,6 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Settings as SettingsIcon, Check, ChevronsUpDown } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { SUPPORTED_COUNTRIES } from '@/data/countries'
@@ -29,11 +31,16 @@ export default function SettingsDialog() {
         <div className="space-y-4">
           <div className="space-y-1">
             <label htmlFor="theme" className="text-base font-medium">Theme</label>
-            <select id="theme" value={settings.theme} onChange={(e) => updateSettings({ theme: e.target.value as 'dark' | 'light' | 'system' })} className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base">
-              <option value="dark">Dark</option>
-              <option value="light">Light</option>
-              <option value="system">System</option>
-            </select>
+            <Select value={settings.theme} onValueChange={(v) => updateSettings({ theme: v as 'dark' | 'light' | 'system' })}>
+              <SelectTrigger id="theme" className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1">
             <label htmlFor="country" className="text-base font-medium">Country (for public holidays)</label>
@@ -66,7 +73,7 @@ export default function SettingsDialog() {
           {years.map((year) => (
             <div key={year} className="space-y-1">
               <label htmlFor={`leave-${year}`} className="text-base font-medium">{year} leave days</label>
-              <input id={`leave-${year}`} type="number" min={0}
+              <Input id={`leave-${year}`} type="number" min={0}
                 value={leaveDrafts[year] ?? String(settings.leaveBudget[year] ?? 0)}
                 onChange={(e) => {
                   const raw = e.target.value
@@ -78,7 +85,7 @@ export default function SettingsDialog() {
                   if (leaveDrafts[year] === '') updateSettings({ leaveBudget: { ...settings.leaveBudget, [year]: 0 } })
                   setLeaveDrafts((d) => { const next = { ...d }; delete next[year]; return next })
                 }}
-                className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" />
+                className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base" />
             </div>
           ))}
         </div>

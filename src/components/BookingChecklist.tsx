@@ -1,5 +1,8 @@
 import { Trash2, Plus } from 'lucide-react'
 import { randomUUID } from '@/lib/uuid'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import type { BookingItem, BookingCategory } from '@/types'
 
 const CATEGORIES: BookingCategory[] = ['dive-shop', 'flight', 'transfer', 'accommodation', 'insurance', 'equipment', 'other']
@@ -26,14 +29,19 @@ export default function BookingChecklist({ items, onChange }: { items: BookingIt
         <div key={it.id} className="space-y-1.5 py-1">
           <div className="flex items-center justify-between gap-2">
             <div className="flex min-w-0 items-center gap-2">
-              <input type="checkbox" checked={it.booked} onChange={(e) => update(it.id, { booked: e.target.checked })} aria-label={`booked ${it.label || it.category}`} />
-              <select value={it.category} onChange={(e) => update(it.id, { category: e.target.value as BookingCategory })} className="rounded-md border border-line bg-surface-elevated px-2 py-1 text-base">
-                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
+              <Checkbox checked={it.booked} onCheckedChange={(checked) => update(it.id, { booked: checked === true })} aria-label={`booked ${it.label || it.category}`} />
+              <Select value={it.category} onValueChange={(v) => update(it.id, { category: v as BookingCategory })}>
+                <SelectTrigger className="h-auto min-w-0 rounded-md border-line bg-surface-elevated px-2 py-1 text-base">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </div>
             <button type="button" onClick={() => remove(it.id)} aria-label="remove item"><Trash2 className="h-4 w-4 shrink-0 text-muted" /></button>
           </div>
-          <input value={it.label} onChange={(e) => update(it.id, { label: e.target.value })} placeholder={PLACEHOLDERS[it.category]} className="w-full min-w-0 rounded-md border border-line bg-surface-elevated px-2 py-1 text-base" />
+          <Input value={it.label} onChange={(e) => update(it.id, { label: e.target.value })} placeholder={PLACEHOLDERS[it.category]} className="w-full min-w-0 rounded-md border-line bg-surface-elevated px-2 py-1 text-base" />
         </div>
       ))}
       <button type="button" onClick={add} className="flex items-center gap-1 text-base text-primary"><Plus className="h-4 w-4" /> Add item</button>

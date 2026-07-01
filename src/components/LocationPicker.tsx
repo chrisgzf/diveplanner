@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
 import { useMergedLocations } from '@/hooks/useMergedLocations'
 
 const NONE = '__none__'
@@ -39,9 +40,9 @@ export default function LocationPicker({ value, customValue, onChange }: {
         </SelectContent>
       </Select>
       {isOther && (
-        <input aria-label="custom location" value={localCustom} placeholder="Custom location name"
+        <Input aria-label="custom location" value={localCustom} placeholder="Custom location name"
           onChange={(e) => { setLocalCustom(e.target.value); onChange(undefined, e.target.value) }}
-          className="w-full rounded-md border border-line bg-surface-elevated px-2 py-2 text-base" />
+          className="w-full rounded-md border-line bg-surface-elevated px-2 py-2 text-base" />
       )}
     </div>
   )

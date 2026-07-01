@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import { Checkbox } from '@/components/ui/checkbox'
 import { enumerateDays, formatShortDate } from '@/lib/dates'
 import type { Segment } from '@/lib/leave'
 
@@ -24,17 +25,13 @@ function LeaveSegmentRow({ segment, excludedSet, onToggleDay, onToggleSegment }:
   const allExcluded = excludedCount === days.length
   const someExcluded = excludedCount > 0 && !allExcluded
   const countedDays = days.length - excludedCount
-  const checkboxRef = useRef<HTMLInputElement>(null)
-  useEffect(() => {
-    if (checkboxRef.current) checkboxRef.current.indeterminate = someExcluded
-  }, [someExcluded])
 
   return (
     <div>
       <div className="flex items-center justify-between gap-3">
         <label className="flex items-center gap-2 py-1.5">
-          <input ref={checkboxRef} type="checkbox" className={`${LEADING_SLOT} cursor-pointer`} checked={!allExcluded}
-            onChange={(e) => onToggleSegment(segment, !e.target.checked)} />
+          <Checkbox className={`${LEADING_SLOT} cursor-pointer`} checked={someExcluded ? 'indeterminate' : !allExcluded}
+            onCheckedChange={(checked) => onToggleSegment(segment, !checked)} />
           <span className={allExcluded ? 'text-muted line-through' : 'text-ink'}>{rangeLabel(segment)}</span>
         </label>
         <span className="flex items-center gap-2">
@@ -53,8 +50,8 @@ function LeaveSegmentRow({ segment, excludedSet, onToggleDay, onToggleSegment }:
         <div className="ml-6 space-y-0.5 border-l border-line pl-2">
           {days.map((d) => (
             <label key={d} className="flex items-center gap-2 py-1">
-              <input type="checkbox" className={`${LEADING_SLOT} cursor-pointer`} checked={!excludedSet.has(d)}
-                onChange={(e) => onToggleDay(d, !e.target.checked)} />
+              <Checkbox className={`${LEADING_SLOT} cursor-pointer`} checked={!excludedSet.has(d)}
+                onCheckedChange={(checked) => onToggleDay(d, !checked)} />
               <span className={excludedSet.has(d) ? 'text-muted line-through' : 'text-ink'}>{fmt(d)}</span>
             </label>
           ))}
