@@ -3,12 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { decodeShare } from '@/lib/share'
 import { useAppStore } from '@/store/useAppStore'
 import { useSyncTheme } from '@/hooks/useSyncTheme'
+import { mergeLocations } from '@/lib/locations'
 import CalendarView from '@/components/calendar/CalendarView'
+import TripDetailDialog from '@/components/TripDetailDialog'
 import { Button } from '@/components/ui/button'
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter,
 } from '@/components/ui/dialog'
-import type { Trip } from '@/types'
+import type { Trip, Location } from '@/types'
 
 export default function SharePage() {
   useSyncTheme()
@@ -48,12 +50,19 @@ export default function SharePage() {
         <Button variant="outline" onClick={() => navigate('/')}>Plan my own</Button>
       </div>
       <main className="mx-auto max-w-5xl px-4 py-6">
-        <SharedCalendar trips={shared.trips} />
+        <SharedCalendar trips={shared.trips} siteOverrides={shared.siteOverrides} />
       </main>
     </div>
   )
 }
 
-function SharedCalendar({ trips }: { trips: Trip[] }) {
-  return <CalendarView readOnly trips={trips} holidays={{}} />
+function SharedCalendar({ trips, siteOverrides }: { trips: Trip[]; siteOverrides: Location[] }) {
+  const [viewingTrip, setViewingTrip] = useState<Trip | null>(null)
+  const locations = mergeLocations(siteOverrides)
+  return (
+    <>
+      <CalendarView readOnly trips={trips} holidays={{}} onTripClick={setViewingTrip} />
+      <TripDetailDialog trip={viewingTrip} locations={locations} onClose={() => setViewingTrip(null)} />
+    </>
+  )
 }

@@ -1,10 +1,18 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import SharePage from './SharePage'
 import { encodeShare } from '@/lib/share'
 import { DEFAULT_SETTINGS } from '@/types'
 import { useAppStore } from '@/store/useAppStore'
+import { calendarWindow } from '@/lib/dates'
+import type { Trip, Location } from '@/types'
+
+function isoInFirstMonth(day: number): string {
+  const { year, month } = calendarWindow(new Date())[0]
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
 
 function renderAt(hash: string) {
   return render(
@@ -38,5 +46,25 @@ describe('SharePage', () => {
     renderAt(hash)
     // local store must remain empty
     expect(useAppStore.getState().trips).toHaveLength(0)
+  })
+
+  it('opens a read-only trip detail dialog on click, resolving location from the shared plan', async () => {
+    const customLoc: Location = {
+      id: 'custom-1', name: 'Secret Reef', country: 'Nowhere', difficulty: 'advanced',
+      highlights: [], seasonality: [],
+    }
+    const sharedTrip: Trip = {
+      id: 'shared-2', label: 'Secret Trip', startDate: isoInFirstMonth(15), endDate: isoInFirstMonth(18),
+      type: 'fun-dive', status: 'confirmed', locationId: 'custom-1',
+      bookings: [{ id: 'b1', category: 'dive-shop', label: 'Eco-diver Scuba', booked: true }],
+    }
+    const hash = encodeShare({ trips: [sharedTrip], siteOverrides: [customLoc], settings: DEFAULT_SETTINGS })
+    // Local store deliberately has NO override for 'custom-1' — proves the
+    // dialog resolves the location from the shared plan, not the local store.
+    useAppStore.setState({ trips: [], siteOverrides: [], settings: DEFAULT_SETTINGS, holidays: {}, holidaysLoading: false, holidaysError: false })
+    renderAt(hash)
+    await userEvent.click(screen.getByRole('button', { name: /secret trip/i }))
+    expect(await screen.findByText('Secret Reef')).toBeInTheDocument()
+    expect(screen.getByText('Eco-diver Scuba')).toBeInTheDocument()
   })
 })
