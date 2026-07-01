@@ -16,9 +16,13 @@ vi.mock('@/components/calendar/CalendarView', () => ({
   ),
 }))
 
-// Mock TripPanel so it doesn't need the full store/form setup
+// Mock TripPanel so it doesn't need the full store/form setup; capture props for assertions
+let tripPanelProps: Record<string, unknown> | null = null
 vi.mock('@/components/TripPanel', () => ({
-  default: () => <div data-testid="trip-panel">TripPanel</div>,
+  default: (props: Record<string, unknown>) => {
+    tripPanelProps = props
+    return <div data-testid="trip-panel">TripPanel</div>
+  },
 }))
 
 function makeMatchMedia(matches: boolean) {
@@ -63,6 +67,25 @@ describe('PlannerPage desktop/mobile gating', () => {
     // Desktop: TripPanel should be visible, Sheet dialog should NOT be in document
     expect(screen.getByTestId('trip-panel')).toBeInTheDocument()
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('passes showClose to TripPanel on desktop', async () => {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: makeMatchMedia(true),
+    })
+
+    render(
+      <MemoryRouter>
+        <PlannerPage />
+      </MemoryRouter>,
+    )
+
+    await act(async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Select Range' }))
+    })
+
+    expect(tripPanelProps?.showClose).toBe(true)
   })
 
   it('mounts TripDrawer (role="dialog") on mobile when open', async () => {

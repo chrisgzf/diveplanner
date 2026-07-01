@@ -45,7 +45,7 @@ export default function PlannerPage() {
               {open ? (
                 <TripPanel key={editing?.id ?? `${pending?.start}-${pending?.end}`}
                   mode={mode} initialRange={pending ?? undefined} trip={editing ?? undefined}
-                  defaultLocationId={defaultLocationId} onClose={close} />
+                  defaultLocationId={defaultLocationId} showClose onClose={close} />
               ) : (
                 <TripsOverview onSelect={(t) => { setPending(null); setEditing(t) }} />
               )}

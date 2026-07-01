@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { X } from 'lucide-react'
 import BookingChecklist from './BookingChecklist'
 import LocationPicker from './LocationPicker'
 import LeaveBreakdown from './LeaveBreakdown'
@@ -28,11 +29,12 @@ function seedBookings(type: TripType): BookingItem[] {
   ]
 }
 
-export default function TripPanel({ mode, initialRange, trip, defaultLocationId, onClose }: {
+export default function TripPanel({ mode, initialRange, trip, defaultLocationId, showClose = false, onClose }: {
   mode: 'create' | 'edit'
   initialRange?: { start: string; end: string }
   trip?: Trip
   defaultLocationId?: string
+  showClose?: boolean
   onClose: () => void
 }) {
   const { addTrip, updateTrip, deleteTrip, trips, holidays } = useAppStore()
@@ -61,6 +63,13 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
     }
     setError('')
   }, [mode, trip, initialRange, defaultLocationId])
+
+  useEffect(() => {
+    if (!showClose) return
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [showClose, onClose])
 
   const names = useMemo(() => holidayNameMap(holidays), [holidays])
   const segments = start && end && start <= end ? segmentDays(start, end, names) : []
@@ -109,7 +118,14 @@ export default function TripPanel({ mode, initialRange, trip, defaultLocationId,
 
   return (
     <>
-      <div className="mb-2"><h2 className="text-xl font-semibold">{mode === 'edit' ? 'Edit trip' : 'New trip'}</h2></div>
+      <div className="mb-2 flex items-center justify-between">
+        <h2 className="text-xl font-semibold">{mode === 'edit' ? 'Edit trip' : 'New trip'}</h2>
+        {showClose && (
+          <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close">
+            <X className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
       <div className="space-y-4 py-4">
         <div className="space-y-1">
           <label htmlFor="trip-name" className="text-base font-medium">Trip name</label>
