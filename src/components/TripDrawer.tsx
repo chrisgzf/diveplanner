@@ -26,7 +26,7 @@ export default function TripDrawer({ open, mode, initialRange, trip, defaultLoca
   useLockHtmlScroll(open)
   return (
     <Sheet open={open} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent side="right" className="flex h-[100svh] w-full flex-col overflow-hidden p-0 sm:max-w-md">
+      <SheetContent side="right" className="flex h-dvh w-full flex-col overflow-hidden p-0 sm:max-w-md">
         <SheetTitle className="sr-only">{mode === 'edit' ? 'Edit trip' : 'New trip'}</SheetTitle>
         <div className="flex-1 overflow-y-auto overscroll-contain p-6">
           {open && (
